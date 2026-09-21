@@ -3,6 +3,7 @@ extends CharacterBody2D
 
 signal health_changed(current_health: int, max_health: int)
 signal died
+signal special_ability_requested
 
 # Movement tuning: adjust these three constants to change how Pip feels.
 const SPEED := 260.0 # Horizontal movement speed.
@@ -58,6 +59,8 @@ func _physics_process(delta: float) -> void:
 
 	if Input.is_action_just_pressed("pip_shoot"):
 		shoot()
+	if Input.is_action_just_pressed("pip_special"):
+		special_ability_requested.emit()
 
 	move_and_slide()
 
@@ -111,13 +114,10 @@ func _on_invincibility_timer_timeout() -> void:
 func _register_controls() -> void:
 	_add_key_action("pip_move_left", KEY_LEFT)
 	_add_key_action("pip_move_right", KEY_RIGHT)
-	_add_key_action("pip_jump", KEY_SPACE)
-	_add_key_action("pip_dash", KEY_SHIFT)
-	_add_key_action("pip_shoot", KEY_Z)
-
-	var mouse_event := InputEventMouseButton.new()
-	mouse_event.button_index = MOUSE_BUTTON_LEFT
-	InputMap.action_add_event("pip_shoot", mouse_event)
+	_add_key_action("pip_dash", KEY_A)
+	_add_key_action("pip_jump", KEY_F)
+	_add_key_action("pip_shoot", KEY_D)
+	_add_key_action("pip_special", KEY_S)
 
 
 func _add_key_action(action: StringName, keycode: Key) -> void:
