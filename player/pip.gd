@@ -22,6 +22,8 @@ const DASH_SPEED := 760.0 # Horizontal speed during a dash.
 @onready var dash_cooldown_timer: Timer = $DashCooldownTimer
 @onready var invincibility_timer: Timer = $InvincibilityTimer
 @onready var flash_timer: Timer = $FlashTimer
+@onready var shoot_sfx: AudioStreamPlayer2D = $ShootSfx
+@onready var hit_sfx: AudioStreamPlayer2D = $HitSfx
 
 var health: int
 var facing_direction: float = 1.0
@@ -68,6 +70,7 @@ func shoot() -> void:
 	bullet.rotation = PI if facing_direction < 0.0 else 0.0
 	get_tree().current_scene.add_child(bullet)
 	bullet.global_position = muzzle.global_position
+	shoot_sfx.play()
 
 
 func take_damage(amount: int) -> void:
@@ -76,6 +79,7 @@ func take_damage(amount: int) -> void:
 
 	health = maxi(health - amount, 0)
 	health_changed.emit(health, max_health)
+	hit_sfx.play()
 
 	if health == 0:
 		died.emit()

@@ -1,6 +1,8 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://player/pip.gd" id="1_pip"]
+[ext_resource type="AudioStream" path="res://audio/shoot.wav" id="2_shoot"]
+[ext_resource type="AudioStream" path="res://audio/player_hit.wav" id="3_hit"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape_pip"]
 radius = 18.0
@@ -47,6 +49,16 @@ one_shot = true
 
 [node name="FlashTimer" type="Timer" parent="."]
 wait_time = 0.1
+
+[node name="ShootSfx" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_shoot")
+volume_db = -6.0
+max_distance = 900.0
+
+[node name="HitSfx" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_hit")
+volume_db = -4.0
+max_distance = 900.0
 
 [connection signal="timeout" from="InvincibilityTimer" to="." method="_on_invincibility_timer_timeout"]
 [connection signal="timeout" from="FlashTimer" to="." method="_on_flash_timer_timeout"]

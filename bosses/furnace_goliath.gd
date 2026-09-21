@@ -18,6 +18,7 @@ const DASH_DURATION := 0.65
 @export var fireball_scene: PackedScene = preload("res://bosses/fireball.tscn")
 
 @onready var muzzle: Marker2D = $Muzzle
+@onready var phase_shift_sfx: AudioStreamPlayer2D = $PhaseShiftSfx
 
 var health: int = MAX_HEALTH
 var phase: int = 1
@@ -66,6 +67,7 @@ func take_damage(amount: int) -> void:
 	if phase == 1 and health < PHASE_TWO_THRESHOLD:
 		phase = 2
 		next_attack_is_dash = true
+		phase_shift_sfx.play()
 		phase_changed.emit(phase)
 
 	if health == 0:
