@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d127q57u1enef"
-path="res://.godot/imported/b18c3cc0-0bf5-4608-86ce-f136dbdbca56.jpg-8756b1fc05b6ac484fe8fae2efe22938.ctex"
+uid="uid://b1nxt1nn4pvdh"
+path="res://.godot/imported/clockwork_environment.png-c9bbf779f620c8926a93b42dee6189e9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/b18c3cc0-0bf5-4608-86ce-f136dbdbca56.jpg"
-dest_files=["res://.godot/imported/b18c3cc0-0bf5-4608-86ce-f136dbdbca56.jpg-8756b1fc05b6ac484fe8fae2efe22938.ctex"]
+source_file="res://assets/clockwork_environment.png"
+dest_files=["res://.godot/imported/clockwork_environment.png-c9bbf779f620c8926a93b42dee6189e9.ctex"]
 
 [params]
 

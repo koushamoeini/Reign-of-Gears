@@ -86,7 +86,7 @@ func take_damage(amount: int) -> void:
 	SoundManager.play_hit_sfx()
 	_show_hit_flash()
 	damage_sparks.restart()
-	sprite_art.region_rect = Rect2(548, 162, 72, 82)
+	sprite_art.region_rect = Rect2(270, 845, 160, 175)
 
 	_update_phase()
 
@@ -104,7 +104,7 @@ func _defeat() -> void:
 	rage_glow.hide()
 	transition_shield.hide()
 	rage_fire_timer.stop()
-	sprite_art.region_rect = Rect2(658, 162, 166, 84)
+	sprite_art.region_rect = Rect2(530, 830, 250, 190)
 	_spawn_explosion()
 
 	var fade_tween := create_tween()
@@ -188,12 +188,12 @@ func _change_state(new_state: State) -> void:
 	match state:
 		State.IDLE:
 			state_time_remaining = IDLE_DURATION
-			sprite_art.region_rect = Rect2(15, 161, 50, 84)
+			sprite_art.region_rect = Rect2(15, 490, 145, 190)
 		State.SHOOTING:
-			sprite_art.region_rect = Rect2(246, 161, 77, 84)
+			sprite_art.region_rect = Rect2(20, 680, 180, 165)
 			_shooting_sequence()
 		State.DASH_ATTACK:
-			sprite_art.region_rect = Rect2(132, 161, 75, 84)
+			sprite_art.region_rect = Rect2(745, 490, 180, 190)
 			state_time_remaining = DASH_DURATION
 			dash_direction = _direction_to_player()
 
@@ -259,7 +259,7 @@ func _enter_phase(new_phase: int) -> void:
 	next_attack_is_dash = true
 	phase_shift_sfx.play()
 	if phase == 3:
-		sprite_art.region_rect = Rect2(367, 161, 143, 84)
+		sprite_art.region_rect = Rect2(930, 680, 180, 165)
 		_start_rage_glow()
 		rage_fire_timer.start(PHASE_THREE_STREAM_INTERVAL)
 	phase_changed.emit(phase)

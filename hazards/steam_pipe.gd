@@ -29,7 +29,6 @@ func _physics_process(delta: float) -> void:
 
 func _on_warning_timer_timeout() -> void:
 	warning.hide()
-	pipe_visual.show()
 	pipe_sprite.show()
 	collision_shape.set_deferred("disabled", false)
 	monitoring = true

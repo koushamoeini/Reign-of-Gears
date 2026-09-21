@@ -1,11 +1,11 @@
 [gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://ui/combat_hud.gd" id="1_hud"]
-[ext_resource type="Texture2D" path="res://assets/b18c3cc0-0bf5-4608-86ce-f136dbdbca56.jpg" id="2_sheet"]
+[ext_resource type="Texture2D" path="res://assets/clockwork_environment.png" id="2_sheet"]
 
 [sub_resource type="AtlasTexture" id="HeartAtlas"]
 atlas = ExtResource("2_sheet")
-region = Rect2(916, 181, 18, 20)
+region = Rect2(1080, 840, 135, 145)
 
 [sub_resource type="StyleBoxFlat" id="BossBarBackground"]
 bg_color = Color(0.08, 0.09, 0.1, 0.96)

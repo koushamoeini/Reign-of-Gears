@@ -8,7 +8,8 @@
 [ext_resource type="AudioStream" path="res://audio/shoot.wav" id="6_shoot"]
 [ext_resource type="AudioStream" path="res://audio/player_hit.wav" id="7_hit"]
 [ext_resource type="AudioStream" path="res://audio/dash.wav" id="8_dash"]
-[ext_resource type="Texture2D" path="res://assets/b18c3cc0-0bf5-4608-86ce-f136dbdbca56.jpg" id="9_sheet"]
+[ext_resource type="Texture2D" path="res://assets/furnace_factory_background.png" id="9_sheet"]
+[ext_resource type="Texture2D" path="res://assets/clockwork_environment.png" id="10_environment"]
 
 [sub_resource type="RectangleShape2D" id="FloorShape"]
 size = Vector2(1280, 60)
@@ -36,17 +37,15 @@ z_index = -5
 
 [node name="LevelBackground" type="Sprite2D" parent="FactoryParallax"]
 texture = ExtResource("9_sheet")
-region_enabled = true
-region_rect = Rect2(655, 436, 350, 92)
 position = Vector2(640, 356)
-scale = Vector2(3.7, 7.1)
+scale = Vector2(0.627, 0.935)
 
 [node name="FactoryElements" type="Sprite2D" parent="FactoryParallax"]
-texture = ExtResource("9_sheet")
+texture = ExtResource("10_environment")
 region_enabled = true
-region_rect = Rect2(246, 390, 283, 143)
-position = Vector2(250, 505)
-scale = Vector2(1.25, 1.25)
+region_rect = Rect2(30, 30, 1450, 160)
+position = Vector2(640, 625)
+scale = Vector2(0.88, 0.55)
 modulate = Color(1, 1, 1, 0.72)
 
 [node name="Floor" type="StaticBody2D" parent="." unique_id=1373653812]

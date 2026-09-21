@@ -116,7 +116,7 @@ func shoot() -> void:
 	bullet.rotation = PI if facing_direction < 0.0 else 0.0
 	get_tree().current_scene.add_child(bullet)
 	bullet.global_position = muzzle.global_position
-	sprite_art.region_rect = Rect2(478, 51, 75, 58)
+	sprite_art.region_rect = Rect2(260, 250, 135, 120)
 	muzzle_flash.restart()
 	SoundManager.play_shoot_sfx()
 	shoot_cooldown_timer.start(_current_fire_interval())
@@ -132,7 +132,7 @@ func take_damage(amount: int) -> void:
 	_show_hit_flash()
 
 	if health == 0:
-		sprite_art.region_rect = Rect2(734, 50, 74, 58)
+		sprite_art.region_rect = Rect2(790, 365, 150, 120)
 		died.emit()
 		queue_free()
 		return
@@ -147,7 +147,7 @@ func _start_dash() -> void:
 		return
 
 	dash_duration_timer.start()
-	sprite_art.region_rect = Rect2(382, 50, 77, 58)
+	sprite_art.region_rect = Rect2(940, 130, 155, 120)
 	dash_cooldown_timer.start()
 	SoundManager.play_dash_sfx()
 
@@ -205,13 +205,13 @@ func _current_fire_interval() -> float:
 
 func _update_sprite_art(direction: float) -> void:
 	if _is_dashing():
-		sprite_art.region_rect = Rect2(382, 50, 77, 58)
+		sprite_art.region_rect = Rect2(940, 130, 155, 120)
 	elif not is_on_floor():
-		sprite_art.region_rect = Rect2(275, 50, 46, 58) if velocity.y < 0.0 else Rect2(326, 50, 43, 58)
+		sprite_art.region_rect = Rect2(25, 130, 130, 120) if velocity.y < 0.0 else Rect2(275, 130, 130, 120)
 	elif not is_zero_approx(direction):
-		sprite_art.region_rect = Rect2(72, 50, 55, 58)
+		sprite_art.region_rect = Rect2(475, 15, 130, 115)
 	else:
-		sprite_art.region_rect = Rect2(20, 50, 43, 58)
+		sprite_art.region_rect = Rect2(25, 15, 110, 115)
 	sprite_art.flip_h = facing_direction < 0.0
 
 

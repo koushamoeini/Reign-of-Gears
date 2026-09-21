@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://bosses/furnace_goliath.gd" id="1_boss"]
 [ext_resource type="AudioStream" path="res://audio/boss_phase_shift.wav" id="2_phase"]
-[ext_resource type="Texture2D" path="res://assets/b18c3cc0-0bf5-4608-86ce-f136dbdbca56.jpg" id="3_sheet"]
+[ext_resource type="Texture2D" path="res://assets/clockwork_characters.png" id="3_sheet"]
 
 [sub_resource type="CapsuleShape2D" id="BossShape"]
 radius = 42.0
@@ -56,26 +56,30 @@ color = Color(1, 0.12, 0.02, 1)
 script = ExtResource("1_boss")
 
 [node name="Body" type="Polygon2D" parent="."]
+visible = false
 polygon = PackedVector2Array(-42, -48, 42, -48, 48, 30, 30, 48, -30, 48, -48, 30)
 color = Color(0.31, 0.28, 0.27, 1)
 
 [node name="SpriteArt" type="Sprite2D" parent="."]
 texture = ExtResource("3_sheet")
 region_enabled = true
-region_rect = Rect2(15, 161, 50, 84)
+region_rect = Rect2(15, 490, 145, 190)
 position = Vector2(0, -10)
-scale = Vector2(1.18, 1.18)
+scale = Vector2(0.58, 0.58)
 z_index = 2
 
 [node name="Furnace" type="Polygon2D" parent="."]
+visible = false
 polygon = PackedVector2Array(-24, -20, 24, -20, 28, 28, -28, 28)
 color = Color(0.92, 0.25, 0.08, 1)
 
 [node name="Core" type="Polygon2D" parent="."]
+visible = false
 polygon = PackedVector2Array(-12, -10, 12, -10, 16, 18, -16, 18)
 color = Color(1, 0.74, 0.16, 1)
 
 [node name="Chimney" type="Polygon2D" parent="."]
+visible = false
 polygon = PackedVector2Array(-28, -70, -5, -70, -5, -42, -28, -42)
 color = Color(0.18, 0.18, 0.19, 1)
 
