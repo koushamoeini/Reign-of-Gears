@@ -49,6 +49,8 @@ const DEFAULT_KEY_BINDINGS := {
 @onready var overclock_timer: Timer = $OverclockTimer
 @onready var overclock_aura: Polygon2D = $OverclockAura
 @onready var overclock_trail: CPUParticles2D = $OverclockTrail
+@onready var muzzle_flash: GPUParticles2D = $Muzzle/MuzzleFlash
+@onready var dash_trail: GPUParticles2D = $DashTrail
 
 var health: int
 var facing_direction: float = 1.0
@@ -95,6 +97,7 @@ func _physics_process(delta: float) -> void:
 		shoot()
 	if Input.is_action_just_pressed("pip_special"):
 		_try_activate_overclock()
+	dash_trail.emitting = _is_dashing()
 
 	move_and_slide()
 	if _is_dashing():
@@ -111,6 +114,7 @@ func shoot() -> void:
 	bullet.rotation = PI if facing_direction < 0.0 else 0.0
 	get_tree().current_scene.add_child(bullet)
 	bullet.global_position = muzzle.global_position
+	muzzle_flash.restart()
 	SoundManager.play_shoot_sfx()
 	shoot_cooldown_timer.start(_current_fire_interval())
 
@@ -170,6 +174,7 @@ func _try_activate_overclock() -> void:
 	overclock_mode_changed.emit(true)
 	overclock_aura.show()
 	overclock_trail.emitting = true
+	SoundManager.play_overclock_sfx()
 	overclock_timer.start()
 
 

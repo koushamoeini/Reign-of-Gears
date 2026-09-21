@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://player/pip.gd" id="1_pip"]
 
@@ -11,6 +11,28 @@ size = Vector2(32, 44)
 
 [sub_resource type="CircleShape2D" id="AbsorbShape_pip"]
 radius = 52.0
+
+[sub_resource type="ParticleProcessMaterial" id="MuzzleFlashMaterial"]
+emission_shape = 1
+direction = Vector3(1, 0, 0)
+spread = 28.0
+gravity = Vector3(0, 0, 0)
+initial_velocity_min = 130.0
+initial_velocity_max = 240.0
+scale_min = 1.8
+scale_max = 3.2
+color = Color(1, 0.74, 0.16, 1)
+
+[sub_resource type="ParticleProcessMaterial" id="DashTrailMaterial"]
+emission_shape = 1
+direction = Vector3(-1, 0, 0)
+spread = 24.0
+gravity = Vector3(0, 120, 0)
+initial_velocity_min = 90.0
+initial_velocity_max = 170.0
+scale_min = 1.2
+scale_max = 2.5
+color = Color(0.24, 0.7, 1, 0.48)
 
 [node name="Pip" type="CharacterBody2D" groups=["player"]]
 script = ExtResource("1_pip")
@@ -71,6 +93,22 @@ shape = SubResource("AbsorbShape_pip")
 
 [node name="Muzzle" type="Marker2D" parent="."]
 position = Vector2(28, 0)
+
+[node name="MuzzleFlash" type="GPUParticles2D" parent="Muzzle"]
+emitting = false
+amount = 14
+lifetime = 0.12
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("MuzzleFlashMaterial")
+
+[node name="DashTrail" type="GPUParticles2D" parent="."]
+emitting = false
+z_index = -1
+amount = 26
+lifetime = 0.28
+local_coords = false
+process_material = SubResource("DashTrailMaterial")
 
 [node name="DashDurationTimer" type="Timer" parent="."]
 wait_time = 0.16

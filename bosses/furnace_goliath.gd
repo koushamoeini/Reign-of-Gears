@@ -29,6 +29,10 @@ const DASH_DURATION := 0.65
 @onready var rage_glow: Polygon2D = $RageGlow
 @onready var transition_shield: Polygon2D = $TransitionShield
 @onready var rage_fire_timer: Timer = $RageFireTimer
+@onready var damage_sparks: GPUParticles2D = $DamageSparks
+@onready var victory_explosion: GPUParticles2D = $VictoryExplosion
+@onready var victory_explosion_wide: GPUParticles2D = $VictoryExplosionWide
+@onready var victory_explosion_core: GPUParticles2D = $VictoryExplosionCore
 
 var health: int = MAX_HEALTH
 var phase: int = 1
@@ -80,6 +84,7 @@ func take_damage(amount: int) -> void:
 	health_changed.emit(health, MAX_HEALTH)
 	SoundManager.play_hit_sfx()
 	_show_hit_flash()
+	damage_sparks.restart()
 
 	_update_phase()
 
@@ -98,15 +103,18 @@ func _defeat() -> void:
 	transition_shield.hide()
 	rage_fire_timer.stop()
 	_spawn_explosion()
-	died.emit()
 
 	var fade_tween := create_tween()
+	fade_tween.tween_interval(1.25)
 	fade_tween.tween_property(self, "modulate:a", 0.0, 0.7)
-	await get_tree().create_timer(0.75).timeout
+	await get_tree().create_timer(2.0).timeout
+	died.emit()
 	queue_free()
 
 
 func _spawn_explosion() -> void:
+	SoundManager.play_boss_explosion_sfx()
+	victory_explosion.restart()
 	for spark_index in 16:
 		var spark := Polygon2D.new()
 		spark.polygon = PackedVector2Array([
@@ -126,6 +134,12 @@ func _spawn_explosion() -> void:
 		spark_tween.tween_property(spark, "scale", Vector2(0.2, 0.2), 0.65)
 		spark_tween.tween_property(spark, "modulate:a", 0.0, 0.65)
 		spark_tween.chain().tween_callback(spark.queue_free)
+	await get_tree().create_timer(0.55).timeout
+	victory_explosion_wide.restart()
+	SoundManager.play_boss_explosion_sfx()
+	await get_tree().create_timer(0.55).timeout
+	victory_explosion_core.restart()
+	SoundManager.play_boss_explosion_sfx()
 
 
 func _choose_attack() -> void:

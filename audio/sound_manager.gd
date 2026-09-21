@@ -3,10 +3,14 @@ extends Node
 const SHOOT_STREAM: AudioStream = preload("res://audio/shoot.wav")
 const HIT_STREAM: AudioStream = preload("res://audio/player_hit.wav")
 const DASH_STREAM: AudioStream = preload("res://audio/dash.wav")
+const OVERCLOCK_STREAM: AudioStream = preload("res://audio/boss_phase_shift.wav")
+const BOSS_EXPLOSION_STREAM: AudioStream = preload("res://audio/boss_phase_shift.wav")
 
 var _shoot_player: AudioStreamPlayer
 var _hit_player: AudioStreamPlayer
 var _dash_player: AudioStreamPlayer
+var _overclock_player: AudioStreamPlayer
+var _boss_explosion_player: AudioStreamPlayer
 var _sfx_volume: float = 1.0
 
 
@@ -15,6 +19,8 @@ func _ready() -> void:
 	_shoot_player = _create_player(SHOOT_STREAM, -6.0, 4)
 	_hit_player = _create_player(HIT_STREAM, -4.0, 4)
 	_dash_player = _create_player(DASH_STREAM, -5.0, 2)
+	_overclock_player = _create_player(OVERCLOCK_STREAM, -5.0, 1)
+	_boss_explosion_player = _create_player(BOSS_EXPLOSION_STREAM, -1.0, 2)
 
 
 func play_shoot_sfx() -> void:
@@ -29,11 +35,21 @@ func play_dash_sfx() -> void:
 	_dash_player.play()
 
 
+func play_overclock_sfx() -> void:
+	_overclock_player.play()
+
+
+func play_boss_explosion_sfx() -> void:
+	_boss_explosion_player.play()
+
+
 func set_sfx_volume(volume: float) -> void:
 	_sfx_volume = clampf(volume, 0.0, 1.0)
 	_shoot_player.volume_db = -6.0 + linear_to_db(maxf(_sfx_volume, 0.001))
 	_hit_player.volume_db = -4.0 + linear_to_db(maxf(_sfx_volume, 0.001))
 	_dash_player.volume_db = -5.0 + linear_to_db(maxf(_sfx_volume, 0.001))
+	_overclock_player.volume_db = -5.0 + linear_to_db(maxf(_sfx_volume, 0.001))
+	_boss_explosion_player.volume_db = -1.0 + linear_to_db(maxf(_sfx_volume, 0.001))
 
 
 func _create_player(stream: AudioStream, volume_db: float, polyphony: int) -> AudioStreamPlayer:
