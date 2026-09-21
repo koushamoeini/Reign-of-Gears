@@ -24,6 +24,7 @@ script = ExtResource("1_main")
 color = Color(1, 1, 1, 1)
 
 [node name="Background" type="ColorRect" parent="." unique_id=356874502]
+z_index = -10
 offset_left = 1.0
 offset_top = -1.0
 offset_right = 1281.0
@@ -33,7 +34,7 @@ color = Color(0.035, 0.043, 0.055, 1)
 
 [node name="FactoryParallax" type="Parallax2D" parent="."]
 scroll_scale = Vector2(0.18, 0.08)
-z_index = -5
+z_index = -9
 
 [node name="LevelBackground" type="Sprite2D" parent="FactoryParallax"]
 texture = ExtResource("9_sheet")

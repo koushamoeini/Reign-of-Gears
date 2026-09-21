@@ -19,6 +19,12 @@ const PHASE_THREE_STREAM_INTERVAL := 0.85
 const PHASE_THREE_FIRE_RATE_MULTIPLIER := 1.5
 const DASH_SPEED := 820.0
 const DASH_DURATION := 0.65
+const SPRITE_IDLE := Rect2(15, 490, 145, 190)
+const SPRITE_TELEGRAPH := Rect2(745, 490, 180, 190)
+const SPRITE_SHOOT := Rect2(20, 680, 180, 165)
+const SPRITE_RAGE := Rect2(930, 680, 180, 165)
+const SPRITE_DAMAGE := Rect2(270, 845, 160, 175)
+const SPRITE_DEATH := Rect2(530, 830, 250, 190)
 
 @export var fireball_scene: PackedScene = preload("res://bosses/fireball.tscn")
 
@@ -55,6 +61,7 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	_face_player()
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 
@@ -86,7 +93,6 @@ func take_damage(amount: int) -> void:
 	SoundManager.play_hit_sfx()
 	_show_hit_flash()
 	damage_sparks.restart()
-	sprite_art.region_rect = Rect2(270, 845, 160, 175)
 
 	_update_phase()
 
@@ -104,7 +110,7 @@ func _defeat() -> void:
 	rage_glow.hide()
 	transition_shield.hide()
 	rage_fire_timer.stop()
-	sprite_art.region_rect = Rect2(530, 830, 250, 190)
+	sprite_art.region_rect = SPRITE_DEATH
 	_spawn_explosion()
 
 	var fade_tween := create_tween()
@@ -164,10 +170,8 @@ func _choose_attack() -> void:
 func _telegraph_attack(next_state: State) -> void:
 	is_telegraphing = true
 	state_time_remaining = 999.0
-	telegraph_flash.color = Color(1.0, 0.12, 0.08, 0.82) if next_state == State.DASH_ATTACK else Color(1.0, 0.84, 0.12, 0.82)
-	telegraph_flash.show()
+	sprite_art.region_rect = SPRITE_TELEGRAPH
 	await get_tree().create_timer(0.5).timeout
-	telegraph_flash.hide()
 	is_telegraphing = false
 	if health > 0:
 		_change_state(next_state)
@@ -176,10 +180,10 @@ func _telegraph_attack(next_state: State) -> void:
 func _show_hit_flash() -> void:
 	hit_flash_version += 1
 	var current_version := hit_flash_version
-	hit_flash.show()
+	sprite_art.region_rect = SPRITE_DAMAGE
 	await get_tree().create_timer(0.1).timeout
-	if current_version == hit_flash_version:
-		hit_flash.hide()
+	if current_version == hit_flash_version and health > 0:
+		_set_state_sprite()
 
 
 func _change_state(new_state: State) -> void:
@@ -188,12 +192,12 @@ func _change_state(new_state: State) -> void:
 	match state:
 		State.IDLE:
 			state_time_remaining = IDLE_DURATION
-			sprite_art.region_rect = Rect2(15, 490, 145, 190)
+			_set_state_sprite()
 		State.SHOOTING:
-			sprite_art.region_rect = Rect2(20, 680, 180, 165)
+			sprite_art.region_rect = SPRITE_SHOOT
 			_shooting_sequence()
 		State.DASH_ATTACK:
-			sprite_art.region_rect = Rect2(745, 490, 180, 190)
+			sprite_art.region_rect = SPRITE_RAGE if phase == 3 else SPRITE_TELEGRAPH
 			state_time_remaining = DASH_DURATION
 			dash_direction = _direction_to_player()
 
@@ -259,28 +263,39 @@ func _enter_phase(new_phase: int) -> void:
 	next_attack_is_dash = true
 	phase_shift_sfx.play()
 	if phase == 3:
-		sprite_art.region_rect = Rect2(930, 680, 180, 165)
-		_start_rage_glow()
+		sprite_art.region_rect = SPRITE_RAGE
 		rage_fire_timer.start(PHASE_THREE_STREAM_INTERVAL)
 	phase_changed.emit(phase)
 	_start_transition_shield()
 
 
 func _start_rage_glow() -> void:
-	rage_glow.show()
-	if rage_tween and rage_tween.is_valid():
-		rage_tween.kill()
-	rage_tween = create_tween().set_loops()
-	rage_tween.tween_property(rage_glow, "modulate:a", 0.38, 0.22)
-	rage_tween.tween_property(rage_glow, "modulate:a", 0.9, 0.22)
+	_set_state_sprite()
 
 
 func _start_transition_shield() -> void:
 	is_transition_shield_active = true
-	transition_shield.show()
 	await get_tree().create_timer(PHASE_TRANSITION_SHIELD_DURATION).timeout
 	is_transition_shield_active = false
-	transition_shield.hide()
+
+
+func _set_state_sprite() -> void:
+	if phase == 3:
+		sprite_art.region_rect = SPRITE_RAGE
+	elif state == State.SHOOTING:
+		sprite_art.region_rect = SPRITE_SHOOT
+	elif state == State.DASH_ATTACK:
+		sprite_art.region_rect = SPRITE_TELEGRAPH
+	else:
+		sprite_art.region_rect = SPRITE_IDLE
+
+
+func _face_player() -> void:
+	if not is_instance_valid(player):
+		return
+	var faces_left := player.global_position.x < global_position.x
+	sprite_art.flip_h = faces_left
+	muzzle.position.x = -absf(muzzle.position.x) if faces_left else absf(muzzle.position.x)
 
 
 func _on_rage_fire_timer_timeout() -> void:
