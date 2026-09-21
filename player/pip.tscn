@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://player/pip.gd" id="1_pip"]
 
@@ -8,6 +8,9 @@ height = 48.0
 
 [sub_resource type="RectangleShape2D" id="HurtboxShape_pip"]
 size = Vector2(32, 44)
+
+[sub_resource type="CircleShape2D" id="ParryShape_pip"]
+radius = 52.0
 
 [node name="Pip" type="CharacterBody2D" groups=["player"]]
 script = ExtResource("1_pip")
@@ -20,6 +23,12 @@ color = Color(0.9, 0.68, 0.2, 1)
 polygon = PackedVector2Array(-22, -24, 22, -24, 22, -19, 12, -19, 12, -36, -12, -36, -12, -19, -22, -19)
 color = Color(0.16, 0.18, 0.2, 1)
 
+[node name="HitFlash" type="Polygon2D" parent="."]
+visible = false
+z_index = 10
+polygon = PackedVector2Array(-22, -24, -12, -24, -12, -36, 12, -36, 12, -24, 22, -24, 22, -19, 18, -19, 18, 24, -18, 24, -18, -19, -22, -19)
+color = Color(1, 1, 1, 0.95)
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape_pip")
 
@@ -29,6 +38,14 @@ collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
 shape = SubResource("HurtboxShape_pip")
+
+[node name="ParryArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 8
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ParryArea"]
+shape = SubResource("ParryShape_pip")
 
 [node name="Muzzle" type="Marker2D" parent="."]
 position = Vector2(28, 0)

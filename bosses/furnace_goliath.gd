@@ -19,6 +19,8 @@ const DASH_DURATION := 0.65
 
 @onready var muzzle: Marker2D = $Muzzle
 @onready var phase_shift_sfx: AudioStreamPlayer2D = $PhaseShiftSfx
+@onready var hit_flash: Polygon2D = $HitFlash
+@onready var telegraph_flash: Polygon2D = $TelegraphFlash
 
 var health: int = MAX_HEALTH
 var phase: int = 1
@@ -27,6 +29,8 @@ var player: Node2D
 var state_time_remaining: float = IDLE_DURATION
 var dash_direction: float = -1.0
 var next_attack_is_dash: bool = false
+var is_telegraphing: bool = false
+var hit_flash_version: int = 0
 
 
 func _ready() -> void:
@@ -64,6 +68,7 @@ func take_damage(amount: int) -> void:
 	health = maxi(health - amount, 0)
 	health_changed.emit(health, MAX_HEALTH)
 	SoundManager.play_hit_sfx()
+	_show_hit_flash()
 
 	if phase == 1 and health < PHASE_TWO_THRESHOLD:
 		phase = 2
@@ -80,6 +85,8 @@ func _defeat() -> void:
 	velocity = Vector2.ZERO
 	set_physics_process(false)
 	$CollisionShape2D.set_deferred("disabled", true)
+	hit_flash.hide()
+	telegraph_flash.hide()
 	_spawn_explosion()
 	died.emit()
 
@@ -112,12 +119,38 @@ func _spawn_explosion() -> void:
 
 
 func _choose_attack() -> void:
+	if is_telegraphing:
+		return
+
+	var next_state: State
 	if phase == 2 and next_attack_is_dash:
 		next_attack_is_dash = false
-		_change_state(State.DASH_ATTACK)
+		next_state = State.DASH_ATTACK
 	else:
 		next_attack_is_dash = phase == 2
-		_change_state(State.SHOOTING)
+		next_state = State.SHOOTING
+	_telegraph_attack(next_state)
+
+
+func _telegraph_attack(next_state: State) -> void:
+	is_telegraphing = true
+	state_time_remaining = 999.0
+	telegraph_flash.color = Color(1.0, 0.12, 0.08, 0.82) if next_state == State.DASH_ATTACK else Color(1.0, 0.84, 0.12, 0.82)
+	telegraph_flash.show()
+	await get_tree().create_timer(0.5).timeout
+	telegraph_flash.hide()
+	is_telegraphing = false
+	if health > 0:
+		_change_state(next_state)
+
+
+func _show_hit_flash() -> void:
+	hit_flash_version += 1
+	var current_version := hit_flash_version
+	hit_flash.show()
+	await get_tree().create_timer(0.1).timeout
+	if current_version == hit_flash_version:
+		hit_flash.hide()
 
 
 func _change_state(new_state: State) -> void:
@@ -153,6 +186,7 @@ func _fire_at_player() -> void:
 
 	var fireball := fireball_scene.instantiate()
 	fireball.set("direction", muzzle.global_position.direction_to(player.global_position))
+	fireball.set("is_parryable", randf() < 0.2)
 	get_tree().current_scene.add_child(fireball)
 	fireball.global_position = muzzle.global_position
 
