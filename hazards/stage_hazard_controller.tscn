@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://hazards/stage_hazard_controller.gd" id="1_controller"]
 
 [sub_resource type="RectangleShape2D" id="PressureShape"]
-size = Vector2(120, 110)
+size = Vector2(70, 110)
 
 [node name="StageHazards" type="Node2D"]
 script = ExtResource("1_controller")
@@ -20,7 +20,7 @@ collision_layer = 16
 collision_mask = 1
 
 [node name="Flames" type="Polygon2D" parent="PressureHazards/LeftPressure"]
-polygon = PackedVector2Array(-60, 55, -60, -35, -45, -8, -30, -48, -12, -12, 5, -55, 22, -10, 42, -42, 60, -5, 60, 55)
+polygon = PackedVector2Array(-35, 55, -35, -35, -27, -8, -18, -48, -7, -12, 3, -55, 13, -10, 25, -42, 35, -5, 35, 55)
 color = Color(1, 0.22, 0.03, 0.85)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PressureHazards/LeftPressure"]
@@ -33,7 +33,7 @@ collision_layer = 16
 collision_mask = 1
 
 [node name="Flames" type="Polygon2D" parent="PressureHazards/RightPressure"]
-polygon = PackedVector2Array(-60, 55, -60, -5, -42, -42, -22, -10, -5, -55, 12, -12, 30, -48, 45, -8, 60, -35, 60, 55)
+polygon = PackedVector2Array(-35, 55, -35, -5, -25, -42, -13, -10, -3, -55, 7, -12, 18, -48, 27, -8, 35, -35, 35, 55)
 color = Color(1, 0.22, 0.03, 0.85)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PressureHazards/RightPressure"]

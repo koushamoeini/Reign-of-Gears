@@ -7,9 +7,9 @@ signal overclock_changed(current_value: int, max_value: int)
 signal overclock_mode_changed(is_active: bool)
 
 # Movement tuning: adjust these values to change how Pip feels.
-const SPEED := 260.0 # Horizontal movement speed.
+const SPEED := 450.0 # Horizontal movement speed.
 const JUMP_VELOCITY := -740.0 # More negative means a higher jump.
-const DASH_SPEED := 760.0 # Horizontal speed during a dash.
+const DASH_SPEED := 1320.0 # Horizontal speed during a dash.
 const RISE_GRAVITY_MULTIPLIER := 2.0
 const FALL_GRAVITY_MULTIPLIER := 2.5
 const MAX_FALL_SPEED := 1750.0

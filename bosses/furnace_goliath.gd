@@ -15,7 +15,7 @@ const PHASE_TRANSITION_SHIELD_DURATION := 0.5
 const PHASE_ONE_SPREAD_ANGLE := 0.22
 const PHASE_TWO_BURST_COUNT := 3
 const PHASE_TWO_BURST_INTERVAL := 0.16
-const PHASE_THREE_STREAM_INTERVAL := 0.18
+const PHASE_THREE_STREAM_INTERVAL := 0.85
 const PHASE_THREE_FIRE_RATE_MULTIPLIER := 1.5
 const DASH_SPEED := 820.0
 const DASH_DURATION := 0.65
@@ -41,7 +41,7 @@ var is_telegraphing: bool = false
 var hit_flash_version: int = 0
 var rage_tween: Tween
 var is_transition_shield_active: bool = false
-var rage_next_bullet_is_blue: bool = false
+var rage_stream_shot_index: int = 0
 
 
 func _ready() -> void:
@@ -266,8 +266,10 @@ func _on_rage_fire_timer_timeout() -> void:
 	if phase != 3 or not is_instance_valid(player):
 		return
 	var target_direction := muzzle.global_position.direction_to(player.global_position)
-	_spawn_fireball(target_direction, 1 if rage_next_bullet_is_blue else 0)
-	rage_next_bullet_is_blue = not rage_next_bullet_is_blue
+	# Two electric-blue shots for every orange shot maintain Overclock openings.
+	var is_blue := rage_stream_shot_index % 3 != 0
+	_spawn_fireball(target_direction, 1 if is_blue else 0)
+	rage_stream_shot_index += 1
 
 
 func _current_shot_interval() -> float:
