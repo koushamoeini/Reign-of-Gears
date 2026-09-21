@@ -63,6 +63,7 @@ func take_damage(amount: int) -> void:
 
 	health = maxi(health - amount, 0)
 	health_changed.emit(health, MAX_HEALTH)
+	SoundManager.play_hit_sfx()
 
 	if phase == 1 and health < PHASE_TWO_THRESHOLD:
 		phase = 2

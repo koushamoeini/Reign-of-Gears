@@ -1,6 +1,10 @@
 class_name CombatHUD
 extends CanvasLayer
 
+signal next_boss_requested
+
+enum ResultAction { RETRY, NEXT_BOSS }
+
 @onready var player_health_label: Label = $Interface/PlayerHealth
 @onready var boss_name_label: Label = $Interface/BossName
 @onready var boss_health_bar: ProgressBar = $Interface/BossHealthBar
@@ -12,6 +16,7 @@ extends CanvasLayer
 
 var player: Node
 var boss: Node
+var result_action: ResultAction = ResultAction.RETRY
 
 
 func _ready() -> void:
@@ -59,6 +64,7 @@ func _on_boss_died() -> void:
 
 
 func show_game_over() -> void:
+	result_action = ResultAction.RETRY
 	result_title.text = "GAME OVER"
 	result_detail.text = "Pip's gears have stopped."
 	retry_button.text = "RETRY"
@@ -68,12 +74,19 @@ func show_game_over() -> void:
 
 
 func show_victory() -> void:
+	result_action = ResultAction.NEXT_BOSS
 	result_title.text = "VICTORY"
 	result_detail.text = "Furnace Goliath has fallen."
-	retry_button.hide()
+	retry_button.text = "NEXT BOSS"
+	retry_button.show()
 	result_overlay.show()
+	retry_button.grab_focus()
 
 
-func _on_retry_button_pressed() -> void:
-	get_tree().paused = false
-	get_tree().reload_current_scene()
+func _on_result_button_pressed() -> void:
+	match result_action:
+		ResultAction.RETRY:
+			get_tree().paused = false
+			get_tree().reload_current_scene()
+		ResultAction.NEXT_BOSS:
+			next_boss_requested.emit()
