@@ -2,6 +2,9 @@ class_name CombatHUD
 extends CanvasLayer
 
 signal start_game_requested
+signal brightness_changed(value: float)
+signal master_volume_changed(value: float)
+signal sfx_volume_changed(value: float)
 
 @onready var player_health_label: Label = $Interface/PlayerHealth
 @onready var overclock_label: Label = $Interface/OverclockLabel
@@ -17,6 +20,7 @@ signal start_game_requested
 @onready var main_menu_button: Button = $Interface/ResultOverlay/MainMenuButton
 @onready var main_menu_overlay: ColorRect = $Interface/MainMenuOverlay
 @onready var start_button: Button = $Interface/MainMenuOverlay/StartButton
+@onready var settings_panel: ColorRect = $Interface/MainMenuOverlay/SettingsPanel
 
 var player: Node
 var boss: Node
@@ -44,7 +48,7 @@ func _connect_combatants() -> void:
 		boss.connect("health_changed", _on_boss_health_changed)
 		boss.connect("phase_changed", _on_boss_phase_changed)
 		boss.connect("died", _on_boss_died)
-		_on_boss_health_changed(boss.get("health"), 50)
+		_on_boss_health_changed(boss.get("health"), boss.call("get_max_health"))
 
 
 func _on_player_health_changed(current_health: int, max_health: int) -> void:
@@ -89,6 +93,26 @@ func show_main_menu() -> void:
 
 func hide_main_menu() -> void:
 	main_menu_overlay.hide()
+
+
+func _on_settings_button_pressed() -> void:
+	settings_panel.show()
+
+
+func _on_close_settings_button_pressed() -> void:
+	settings_panel.hide()
+
+
+func _on_brightness_slider_value_changed(value: float) -> void:
+	brightness_changed.emit(value)
+
+
+func _on_master_volume_slider_value_changed(value: float) -> void:
+	master_volume_changed.emit(value)
+
+
+func _on_sfx_volume_slider_value_changed(value: float) -> void:
+	sfx_volume_changed.emit(value)
 
 
 func show_game_over() -> void:

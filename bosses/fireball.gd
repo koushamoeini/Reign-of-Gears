@@ -1,7 +1,7 @@
 class_name FurnaceFireball
 extends Area2D
 
-@export var speed: float = 360.0
+@export var speed: float = 468.0
 @export var damage: int = 1
 
 var direction: Vector2 = Vector2.LEFT

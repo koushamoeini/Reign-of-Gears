@@ -7,6 +7,7 @@ const DASH_STREAM: AudioStream = preload("res://audio/dash.wav")
 var _shoot_player: AudioStreamPlayer
 var _hit_player: AudioStreamPlayer
 var _dash_player: AudioStreamPlayer
+var _sfx_volume: float = 1.0
 
 
 func _ready() -> void:
@@ -26,6 +27,13 @@ func play_hit_sfx() -> void:
 
 func play_dash_sfx() -> void:
 	_dash_player.play()
+
+
+func set_sfx_volume(volume: float) -> void:
+	_sfx_volume = clampf(volume, 0.0, 1.0)
+	_shoot_player.volume_db = -6.0 + linear_to_db(maxf(_sfx_volume, 0.001))
+	_hit_player.volume_db = -4.0 + linear_to_db(maxf(_sfx_volume, 0.001))
+	_dash_player.volume_db = -5.0 + linear_to_db(maxf(_sfx_volume, 0.001))
 
 
 func _create_player(stream: AudioStream, volume_db: float, polyphony: int) -> AudioStreamPlayer:

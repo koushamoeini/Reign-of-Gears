@@ -19,7 +19,7 @@ func _process(_delta: float) -> void:
 func set_phase(new_phase: int) -> void:
 	current_phase = new_phase
 	if current_phase >= 2 and pipe_timer.is_stopped():
-		_spawn_pipe_warning()
+		call_deferred("_spawn_pipe_warning")
 		pipe_timer.start()
 	if current_phase >= 3:
 		_enable_pressure_hazards()
@@ -31,6 +31,10 @@ func _spawn_pipe_warning() -> void:
 	var pipe := steam_pipe_scene.instantiate()
 	add_child(pipe)
 	pipe.position = Vector2(randf_range(150.0, 1130.0), 0.0)
+
+
+func _on_pipe_timer_timeout() -> void:
+	call_deferred("_spawn_pipe_warning")
 
 
 func _enable_pressure_hazards() -> void:

@@ -40,6 +40,6 @@ color = Color(1, 0.22, 0.03, 0.85)
 shape = SubResource("PressureShape")
 disabled = true
 
-[connection signal="timeout" from="PipeTimer" to="." method="_spawn_pipe_warning"]
+[connection signal="timeout" from="PipeTimer" to="." method="_on_pipe_timer_timeout"]
 [connection signal="body_entered" from="PressureHazards/LeftPressure" to="." method="_on_pressure_body_entered"]
 [connection signal="body_entered" from="PressureHazards/RightPressure" to="." method="_on_pressure_body_entered"]

@@ -17,7 +17,7 @@ const OVERCLOCK_SPEED_MULTIPLIER := 1.5
 const OVERCLOCK_FIRE_RATE_MULTIPLIER := 2.0
 
 @export var dash_duration: float = 0.16
-@export var dash_cooldown: float = 0.8
+@export var dash_cooldown: float = 0.5
 @export var fire_interval: float = 0.24
 
 @export_group("Combat")
@@ -201,7 +201,7 @@ func _register_controls() -> void:
 	_add_key_action("pip_dash", KEY_A)
 	_add_key_action("pip_jump", KEY_F)
 	_add_key_action("pip_shoot", KEY_D)
-	_add_key_action("pip_special", KEY_E)
+	_add_key_action("pip_special", KEY_S)
 
 
 func _add_key_action(action: StringName, keycode: Key) -> void:

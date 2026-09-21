@@ -7,12 +7,15 @@ signal died
 
 enum State { IDLE, SHOOTING, DASH_ATTACK }
 
-const MAX_HEALTH := 50
-const PHASE_TWO_THRESHOLD := 25
-const PHASE_THREE_THRESHOLD := 15
-const IDLE_DURATION := 2.0
-const SHOT_COUNT := 3
-const SHOT_INTERVAL := 0.4
+const MAX_HEALTH := 250
+const PHASE_TWO_THRESHOLD := 170
+const PHASE_THREE_THRESHOLD := 70
+const IDLE_DURATION := 0.6
+const PHASE_TRANSITION_SHIELD_DURATION := 0.5
+const PHASE_ONE_SPREAD_ANGLE := 0.22
+const PHASE_TWO_BURST_COUNT := 3
+const PHASE_TWO_BURST_INTERVAL := 0.16
+const PHASE_THREE_STREAM_INTERVAL := 0.18
 const PHASE_THREE_FIRE_RATE_MULTIPLIER := 1.5
 const DASH_SPEED := 820.0
 const DASH_DURATION := 0.65
@@ -24,6 +27,8 @@ const DASH_DURATION := 0.65
 @onready var hit_flash: Polygon2D = $HitFlash
 @onready var telegraph_flash: Polygon2D = $TelegraphFlash
 @onready var rage_glow: Polygon2D = $RageGlow
+@onready var transition_shield: Polygon2D = $TransitionShield
+@onready var rage_fire_timer: Timer = $RageFireTimer
 
 var health: int = MAX_HEALTH
 var phase: int = 1
@@ -35,6 +40,8 @@ var next_attack_is_dash: bool = false
 var is_telegraphing: bool = false
 var hit_flash_version: int = 0
 var rage_tween: Tween
+var is_transition_shield_active: bool = false
+var rage_next_bullet_is_blue: bool = false
 
 
 func _ready() -> void:
@@ -66,7 +73,7 @@ func _physics_process(delta: float) -> void:
 
 
 func take_damage(amount: int) -> void:
-	if amount <= 0 or health <= 0:
+	if is_transition_shield_active or amount <= 0 or health <= 0:
 		return
 
 	health = maxi(health - amount, 0)
@@ -88,6 +95,8 @@ func _defeat() -> void:
 	hit_flash.hide()
 	telegraph_flash.hide()
 	rage_glow.hide()
+	transition_shield.hide()
+	rage_fire_timer.stop()
 	_spawn_explosion()
 	died.emit()
 
@@ -124,7 +133,9 @@ func _choose_attack() -> void:
 		return
 
 	var next_state: State
-	if phase >= 2 and next_attack_is_dash:
+	if phase == 3:
+		next_state = State.DASH_ATTACK
+	elif phase >= 2 and next_attack_is_dash:
 		next_attack_is_dash = false
 		next_state = State.DASH_ATTACK
 	else:
@@ -168,12 +179,15 @@ func _change_state(new_state: State) -> void:
 
 
 func _shooting_sequence() -> void:
-	for shot_index in SHOT_COUNT:
-		if state != State.SHOOTING or not is_instance_valid(player):
-			break
-		_fire_at_player()
-		if shot_index < SHOT_COUNT - 1:
-			await get_tree().create_timer(_current_shot_interval()).timeout
+	if phase == 1:
+		_fire_spread_shot()
+	elif phase == 2:
+		for burst_index in PHASE_TWO_BURST_COUNT:
+			if state != State.SHOOTING or not is_instance_valid(player):
+				break
+			_fire_at_player()
+			if burst_index < PHASE_TWO_BURST_COUNT - 1:
+				await get_tree().create_timer(PHASE_TWO_BURST_INTERVAL).timeout
 
 	if state == State.SHOOTING:
 		_change_state(State.IDLE)
@@ -185,9 +199,22 @@ func _fire_at_player() -> void:
 	if not is_instance_valid(player):
 		return
 
+	_spawn_fireball(muzzle.global_position.direction_to(player.global_position))
+
+
+func _fire_spread_shot() -> void:
+	if not is_instance_valid(player):
+		return
+	var target_direction := muzzle.global_position.direction_to(player.global_position)
+	for spread_offset in [-PHASE_ONE_SPREAD_ANGLE, 0.0, PHASE_ONE_SPREAD_ANGLE]:
+		_spawn_fireball(target_direction.rotated(spread_offset))
+
+
+func _spawn_fireball(direction: Vector2, blue_override: int = -1) -> void:
 	var fireball := fireball_scene.instantiate()
-	fireball.set("direction", muzzle.global_position.direction_to(player.global_position))
-	fireball.set("is_absorbable", randf() < 0.2)
+	var is_blue := randf() < 0.2 if blue_override == -1 else blue_override == 1
+	fireball.set("direction", direction)
+	fireball.set("is_absorbable", is_blue)
 	get_tree().current_scene.add_child(fireball)
 	fireball.global_position = muzzle.global_position
 
@@ -213,7 +240,9 @@ func _enter_phase(new_phase: int) -> void:
 	phase_shift_sfx.play()
 	if phase == 3:
 		_start_rage_glow()
+		rage_fire_timer.start(PHASE_THREE_STREAM_INTERVAL)
 	phase_changed.emit(phase)
+	_start_transition_shield()
 
 
 func _start_rage_glow() -> void:
@@ -225,8 +254,28 @@ func _start_rage_glow() -> void:
 	rage_tween.tween_property(rage_glow, "modulate:a", 0.9, 0.22)
 
 
+func _start_transition_shield() -> void:
+	is_transition_shield_active = true
+	transition_shield.show()
+	await get_tree().create_timer(PHASE_TRANSITION_SHIELD_DURATION).timeout
+	is_transition_shield_active = false
+	transition_shield.hide()
+
+
+func _on_rage_fire_timer_timeout() -> void:
+	if phase != 3 or not is_instance_valid(player):
+		return
+	var target_direction := muzzle.global_position.direction_to(player.global_position)
+	_spawn_fireball(target_direction, 1 if rage_next_bullet_is_blue else 0)
+	rage_next_bullet_is_blue = not rage_next_bullet_is_blue
+
+
 func _current_shot_interval() -> float:
-	return SHOT_INTERVAL / PHASE_THREE_FIRE_RATE_MULTIPLIER if phase == 3 else SHOT_INTERVAL
+	return PHASE_TWO_BURST_INTERVAL / PHASE_THREE_FIRE_RATE_MULTIPLIER if phase == 3 else PHASE_TWO_BURST_INTERVAL
+
+
+func get_max_health() -> int:
+	return MAX_HEALTH
 
 
 func _damage_dash_collisions() -> void:

@@ -18,6 +18,9 @@ size = Vector2(40, 720)
 [node name="Main" type="Node2D" unique_id=889198793]
 script = ExtResource("1_main")
 
+[node name="BrightnessModulate" type="CanvasModulate" parent="."]
+color = Color(1, 1, 1, 1)
+
 [node name="Background" type="ColorRect" parent="." unique_id=356874502]
 offset_left = 1.0
 offset_top = -1.0

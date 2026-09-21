@@ -45,6 +45,13 @@ scale = Vector2(1.12, 1.12)
 polygon = PackedVector2Array(-28, -70, -5, -70, -5, -48, 42, -48, 48, 30, 30, 48, -30, 48, -48, 30, -42, -48, -28, -48)
 color = Color(1, 0.18, 0.02, 0.62)
 
+[node name="TransitionShield" type="Polygon2D" parent="."]
+visible = false
+z_index = 7
+scale = Vector2(1.28, 1.28)
+polygon = PackedVector2Array(-28, -70, -5, -70, -5, -48, 42, -48, 48, 30, 30, 48, -30, 48, -48, 30, -42, -48, -28, -48)
+color = Color(0.12, 0.76, 1, 0.58)
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("BossShape")
 
@@ -55,3 +62,8 @@ position = Vector2(-50, -8)
 stream = ExtResource("2_phase")
 volume_db = -3.0
 max_distance = 1200.0
+
+[node name="RageFireTimer" type="Timer" parent="."]
+wait_time = 0.18
+
+[connection signal="timeout" from="RageFireTimer" to="." method="_on_rage_fire_timer_timeout"]
