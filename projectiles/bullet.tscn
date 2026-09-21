@@ -17,8 +17,7 @@ color = Color(1, 0.82, 0.26, 1)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape_bullet")
 
-[node name="Lifetime" type="Timer" parent="."]
-wait_time = 2.0
-one_shot = true
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+rect = Rect2(-12, -8, 24, 16)
 
-[connection signal="timeout" from="Lifetime" to="." method="queue_free"]
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_screen_exited"]
