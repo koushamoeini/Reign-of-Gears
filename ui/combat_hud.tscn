@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://ui/combat_hud.gd" id="1_hud"]
 
@@ -16,6 +16,25 @@ corner_radius_bottom_left = 3
 
 [sub_resource type="StyleBoxFlat" id="BossBarFill"]
 bg_color = Color(0.77, 0.15, 0.08, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="OverclockBarBackground"]
+bg_color = Color(0.055, 0.075, 0.095, 0.96)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.12, 0.48, 0.72, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="OverclockBarFill"]
+bg_color = Color(0.02, 0.55, 1, 1)
 corner_radius_top_left = 2
 corner_radius_top_right = 2
 corner_radius_bottom_right = 2
@@ -46,6 +65,44 @@ theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 20
 text = "PIP  HP  3 / 3"
 
+[node name="OverclockLabel" type="Label" parent="Interface"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 60.0
+offset_right = 224.0
+offset_bottom = 80.0
+theme_override_colors/font_color = Color(0.3, 0.76, 1, 1)
+theme_override_colors/font_outline_color = Color(0.04, 0.045, 0.05, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 13
+text = "OVERCLOCK"
+
+[node name="OverclockBar" type="ProgressBar" parent="Interface"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 84.0
+offset_right = 224.0
+offset_bottom = 106.0
+theme_override_styles/background = SubResource("OverclockBarBackground")
+theme_override_styles/fill = SubResource("OverclockBarFill")
+max_value = 100.0
+show_percentage = false
+
+[node name="OverclockValue" type="Label" parent="Interface"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 84.0
+offset_right = 224.0
+offset_bottom = 106.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.86, 0.96, 1, 1)
+theme_override_colors/font_outline_color = Color(0.04, 0.06, 0.08, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 12
+text = "0 / 100"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="BossName" type="Label" parent="Interface"]
 layout_mode = 1
 anchors_preset = 10
@@ -64,8 +121,8 @@ horizontal_alignment = 1
 [node name="BossHealthBar" type="ProgressBar" parent="Interface"]
 layout_mode = 1
 anchors_preset = 10
-anchor_left = 0.18
-anchor_right = 0.82
+anchor_left = 0.32
+anchor_right = 0.68
 offset_top = 52.0
 offset_bottom = 84.0
 grow_horizontal = 2
@@ -79,8 +136,8 @@ show_percentage = false
 [node name="BossHealthValue" type="Label" parent="Interface"]
 layout_mode = 1
 anchors_preset = 10
-anchor_left = 0.18
-anchor_right = 0.82
+anchor_left = 0.32
+anchor_right = 0.68
 offset_top = 54.0
 offset_bottom = 84.0
 grow_horizontal = 2

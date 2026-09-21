@@ -9,7 +9,7 @@ height = 48.0
 [sub_resource type="RectangleShape2D" id="HurtboxShape_pip"]
 size = Vector2(32, 44)
 
-[sub_resource type="CircleShape2D" id="ParryShape_pip"]
+[sub_resource type="CircleShape2D" id="AbsorbShape_pip"]
 radius = 52.0
 
 [node name="Pip" type="CharacterBody2D" groups=["player"]]
@@ -29,6 +29,13 @@ z_index = 10
 polygon = PackedVector2Array(-22, -24, -12, -24, -12, -36, 12, -36, 12, -24, 22, -24, 22, -19, 18, -19, 18, 24, -18, 24, -18, -19, -22, -19)
 color = Color(1, 1, 1, 0.95)
 
+[node name="OverclockAura" type="Polygon2D" parent="."]
+visible = false
+z_index = -1
+scale = Vector2(1.35, 1.35)
+polygon = PackedVector2Array(-22, -24, -12, -24, -12, -36, 12, -36, 12, -24, 22, -24, 22, 24, -22, 24)
+color = Color(0.05, 0.62, 1, 0.42)
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape_pip")
 
@@ -39,13 +46,13 @@ collision_mask = 0
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
 shape = SubResource("HurtboxShape_pip")
 
-[node name="ParryArea" type="Area2D" parent="."]
+[node name="AbsorbArea" type="Area2D" parent="."]
 collision_layer = 0
 collision_mask = 8
 monitorable = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ParryArea"]
-shape = SubResource("ParryShape_pip")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AbsorbArea"]
+shape = SubResource("AbsorbShape_pip")
 
 [node name="Muzzle" type="Marker2D" parent="."]
 position = Vector2(28, 0)
@@ -65,5 +72,13 @@ one_shot = true
 [node name="FlashTimer" type="Timer" parent="."]
 wait_time = 0.1
 
+[node name="ShootCooldownTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="OverclockTimer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
 [connection signal="timeout" from="InvincibilityTimer" to="." method="_on_invincibility_timer_timeout"]
 [connection signal="timeout" from="FlashTimer" to="." method="_on_flash_timer_timeout"]
+[connection signal="timeout" from="OverclockTimer" to="." method="_on_overclock_timer_timeout"]

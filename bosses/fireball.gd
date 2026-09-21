@@ -5,15 +5,16 @@ extends Area2D
 @export var damage: int = 1
 
 var direction: Vector2 = Vector2.LEFT
-var is_parryable: bool = false
-var was_parried: bool = false
+var is_absorbable: bool = false
+var was_absorbed: bool = false
 
 
 func _ready() -> void:
-	if is_parryable:
-		add_to_group("pink_projectiles")
-		$Glow.color = Color(1.0, 0.12, 0.62, 1.0)
-		$Core.color = Color(1.0, 0.76, 0.9, 1.0)
+	if is_absorbable:
+		add_to_group("blue_projectiles")
+		$Aura.show()
+		$Glow.color = Color(0.02, 0.46, 1.0, 1.0)
+		$Core.color = Color(0.68, 0.93, 1.0, 1.0)
 
 
 func _physics_process(delta: float) -> void:
@@ -21,7 +22,9 @@ func _physics_process(delta: float) -> void:
 
 
 func _on_body_entered(body: Node) -> void:
-	if was_parried or not body.is_in_group("player"):
+	if was_absorbed or not body.is_in_group("player"):
+		return
+	if is_absorbable and body.has_method("try_absorb_projectile") and body.try_absorb_projectile(self):
 		return
 	if body.has_method("take_damage"):
 		body.take_damage(damage)
@@ -32,10 +35,11 @@ func _on_screen_exited() -> void:
 	queue_free()
 
 
-func parry() -> void:
-	if not is_parryable or was_parried:
-		return
-	was_parried = true
+func absorb() -> bool:
+	if not is_absorbable or was_absorbed:
+		return false
+	was_absorbed = true
 	monitoring = false
 	$CollisionShape2D.set_deferred("disabled", true)
 	queue_free()
+	return true

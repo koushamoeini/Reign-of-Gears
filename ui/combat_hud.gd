@@ -6,6 +6,9 @@ signal next_boss_requested
 enum ResultAction { RETRY, NEXT_BOSS }
 
 @onready var player_health_label: Label = $Interface/PlayerHealth
+@onready var overclock_label: Label = $Interface/OverclockLabel
+@onready var overclock_bar: ProgressBar = $Interface/OverclockBar
+@onready var overclock_value: Label = $Interface/OverclockValue
 @onready var boss_name_label: Label = $Interface/BossName
 @onready var boss_health_bar: ProgressBar = $Interface/BossHealthBar
 @onready var boss_health_label: Label = $Interface/BossHealthValue
@@ -30,8 +33,11 @@ func _connect_combatants() -> void:
 
 	if is_instance_valid(player):
 		player.connect("health_changed", _on_player_health_changed)
+		player.connect("overclock_changed", _on_overclock_changed)
+		player.connect("overclock_mode_changed", _on_overclock_mode_changed)
 		player.connect("died", _on_player_died)
 		_on_player_health_changed(player.get("health"), player.get("max_health"))
+		_on_overclock_changed(player.get("overclock_meter"), 100)
 
 	if is_instance_valid(boss):
 		boss.connect("health_changed", _on_boss_health_changed)
@@ -46,6 +52,17 @@ func _on_player_health_changed(current_health: int, max_health: int) -> void:
 
 func _on_player_died() -> void:
 	player_health_label.text = "PIP  HP  0 / 3"
+
+
+func _on_overclock_changed(current_value: int, max_value: int) -> void:
+	overclock_bar.max_value = max_value
+	overclock_bar.value = current_value
+	overclock_value.text = "%d / %d" % [current_value, max_value]
+
+
+func _on_overclock_mode_changed(is_active: bool) -> void:
+	overclock_label.text = "OVERCLOCK  //  ACTIVE" if is_active else "OVERCLOCK"
+	overclock_value.text = "5.0s" if is_active else "%d / 100" % overclock_bar.value
 
 
 func _on_boss_health_changed(current_health: int, max_health: int) -> void:

@@ -186,7 +186,7 @@ func _fire_at_player() -> void:
 
 	var fireball := fireball_scene.instantiate()
 	fireball.set("direction", muzzle.global_position.direction_to(player.global_position))
-	fireball.set("is_parryable", randf() < 0.2)
+	fireball.set("is_absorbable", randf() < 0.2)
 	get_tree().current_scene.add_child(fireball)
 	fireball.global_position = muzzle.global_position
 
