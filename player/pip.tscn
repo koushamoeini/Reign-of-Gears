@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://player/pip.gd" id="1_pip"]
 [ext_resource type="Texture2D" path="res://assets/clockwork_characters.png" id="2_sheet"]
@@ -35,6 +35,12 @@ scale_min = 1.2
 scale_max = 2.5
 color = Color(0.24, 0.7, 1, 0.48)
 
+[sub_resource type="Shader" id="CombatOutlineShader"]
+code = "shader_type canvas_item;\nvoid fragment() {\n vec4 base = texture(TEXTURE, UV);\n float edge = 0.0;\n edge = max(edge, texture(TEXTURE, UV + vec2(TEXTURE_PIXEL_SIZE.x * 3.0, 0.0)).a);\n edge = max(edge, texture(TEXTURE, UV - vec2(TEXTURE_PIXEL_SIZE.x * 3.0, 0.0)).a);\n edge = max(edge, texture(TEXTURE, UV + vec2(0.0, TEXTURE_PIXEL_SIZE.y * 3.0)).a);\n edge = max(edge, texture(TEXTURE, UV - vec2(0.0, TEXTURE_PIXEL_SIZE.y * 3.0)).a);\n vec4 outline = vec4(0.25, 0.85, 1.0, edge * (1.0 - base.a));\n COLOR = mix(outline, vec4(base.rgb * 1.18, base.a), base.a);\n}"
+
+[sub_resource type="ShaderMaterial" id="CombatOutlineMaterial"]
+shader = SubResource("CombatOutlineShader")
+
 [node name="Pip" type="CharacterBody2D" groups=["player"]]
 script = ExtResource("1_pip")
 
@@ -44,6 +50,7 @@ polygon = PackedVector2Array(-18, -24, 18, -24, 18, 24, -18, 24)
 color = Color(0.9, 0.68, 0.2, 1)
 
 [node name="SpriteArt" type="Sprite2D" parent="."]
+material = SubResource("CombatOutlineMaterial")
 texture = ExtResource("2_sheet")
 region_enabled = true
 region_rect = Rect2(25, 15, 110, 115)

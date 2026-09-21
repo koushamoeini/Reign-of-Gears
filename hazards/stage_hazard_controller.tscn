@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://hazards/stage_hazard_controller.gd" id="1_controller"]
+[ext_resource type="Texture2D" path="res://assets/clockwork_environment.png" id="2_sheet"]
 
 [sub_resource type="RectangleShape2D" id="PressureShape"]
 size = Vector2(70, 110)
@@ -20,8 +21,16 @@ collision_layer = 16
 collision_mask = 1
 
 [node name="Flames" type="Polygon2D" parent="PressureHazards/LeftPressure"]
+visible = false
 polygon = PackedVector2Array(-35, 55, -35, -35, -27, -8, -18, -48, -7, -12, 3, -55, 13, -10, 25, -42, 35, -5, 35, 55)
 color = Color(1, 0.22, 0.03, 0.85)
+
+[node name="FlameSprite" type="Sprite2D" parent="PressureHazards/LeftPressure"]
+texture = ExtResource("2_sheet")
+region_enabled = true
+region_rect = Rect2(750, 330, 190, 250)
+position = Vector2(0, -34)
+scale = Vector2(0.42, 0.42)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PressureHazards/LeftPressure"]
 shape = SubResource("PressureShape")
@@ -33,8 +42,16 @@ collision_layer = 16
 collision_mask = 1
 
 [node name="Flames" type="Polygon2D" parent="PressureHazards/RightPressure"]
+visible = false
 polygon = PackedVector2Array(-35, 55, -35, -5, -25, -42, -13, -10, -3, -55, 7, -12, 18, -48, 27, -8, 35, -35, 35, 55)
 color = Color(1, 0.22, 0.03, 0.85)
+
+[node name="FlameSprite" type="Sprite2D" parent="PressureHazards/RightPressure"]
+texture = ExtResource("2_sheet")
+region_enabled = true
+region_rect = Rect2(750, 330, 190, 250)
+position = Vector2(0, -34)
+scale = Vector2(0.42, 0.42)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PressureHazards/RightPressure"]
 shape = SubResource("PressureShape")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://bosses/furnace_goliath.gd" id="1_boss"]
 [ext_resource type="AudioStream" path="res://audio/boss_phase_shift.wav" id="2_phase"]
@@ -52,6 +52,12 @@ scale_min = 3.0
 scale_max = 6.0
 color = Color(1, 0.12, 0.02, 1)
 
+[sub_resource type="Shader" id="BossOutlineShader"]
+code = "shader_type canvas_item;\nvoid fragment() {\n vec4 base = texture(TEXTURE, UV);\n float edge = 0.0;\n edge = max(edge, texture(TEXTURE, UV + vec2(TEXTURE_PIXEL_SIZE.x * 3.0, 0.0)).a);\n edge = max(edge, texture(TEXTURE, UV - vec2(TEXTURE_PIXEL_SIZE.x * 3.0, 0.0)).a);\n edge = max(edge, texture(TEXTURE, UV + vec2(0.0, TEXTURE_PIXEL_SIZE.y * 3.0)).a);\n edge = max(edge, texture(TEXTURE, UV - vec2(0.0, TEXTURE_PIXEL_SIZE.y * 3.0)).a);\n vec4 outline = vec4(1.0, 0.56, 0.16, edge * (1.0 - base.a));\n COLOR = mix(outline, vec4(base.rgb * 1.16, base.a), base.a);\n}"
+
+[sub_resource type="ShaderMaterial" id="BossOutlineMaterial"]
+shader = SubResource("BossOutlineShader")
+
 [node name="FurnaceGoliath" type="CharacterBody2D" groups=["bosses"]]
 script = ExtResource("1_boss")
 
@@ -61,10 +67,12 @@ polygon = PackedVector2Array(-42, -48, 42, -48, 48, 30, 30, 48, -30, 48, -48, 30
 color = Color(0.31, 0.28, 0.27, 1)
 
 [node name="SpriteArt" type="Sprite2D" parent="."]
+material = SubResource("BossOutlineMaterial")
 texture = ExtResource("3_sheet")
 region_enabled = true
-region_rect = Rect2(15, 490, 145, 190)
-position = Vector2(0, -58)
+region_rect = Rect2(20, 500, 180, 190)
+position = Vector2(0, 32)
+offset = Vector2(0, -95)
 scale = Vector2(1.15, 1.15)
 z_index = 2
 

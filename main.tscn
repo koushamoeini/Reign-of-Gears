@@ -35,6 +35,7 @@ color = Color(0.035, 0.043, 0.055, 1)
 [node name="FactoryParallax" type="Parallax2D" parent="."]
 scroll_scale = Vector2(0.18, 0.08)
 z_index = -9
+modulate = Color(0.4, 0.4, 0.466667, 1)
 
 [node name="LevelBackground" type="Sprite2D" parent="FactoryParallax"]
 texture = ExtResource("9_sheet")
@@ -45,21 +46,22 @@ scale = Vector2(0.627, 0.935)
 texture = ExtResource("10_environment")
 region_enabled = true
 region_rect = Rect2(30, 30, 1450, 160)
-position = Vector2(640, 625)
-scale = Vector2(0.88, 0.55)
-modulate = Color(1, 1, 1, 0.72)
+position = Vector2(640, 668)
+scale = Vector2(0.88, 0.72)
+modulate = Color(1, 1, 1, 0.9)
 
 [node name="GameplayContrast" type="ColorRect" parent="."]
 z_index = -8
 offset_right = 1280.0
 offset_bottom = 720.0
 mouse_filter = 2
-color = Color(0.015, 0.025, 0.035, 0.42)
+color = Color(0.015, 0.025, 0.035, 0.18)
 
 [node name="Floor" type="StaticBody2D" parent="." unique_id=1373653812]
 position = Vector2(640, 690)
 
 [node name="Visual" type="Polygon2D" parent="Floor" unique_id=1983497154]
+visible = false
 color = Color(0.18, 0.2, 0.22, 1)
 polygon = PackedVector2Array(-640, -30, 640, -30, 640, 30, -640, 30)
 

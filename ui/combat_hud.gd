@@ -21,7 +21,6 @@ signal sfx_volume_changed(value: float)
 @onready var main_menu_overlay: ColorRect = $Interface/MainMenuOverlay
 @onready var start_button: Button = $Interface/MainMenuOverlay/StartButton
 @onready var settings_panel: ColorRect = $Interface/MainMenuOverlay/SettingsPanel
-@onready var health_hearts: Array[TextureRect] = [$Interface/HeartOne, $Interface/HeartTwo, $Interface/HeartThree]
 
 var rebind_buttons: Dictionary = {}
 var rebinding_action: StringName
@@ -57,13 +56,11 @@ func _connect_combatants() -> void:
 
 
 func _on_player_health_changed(current_health: int, max_health: int) -> void:
-	player_health_label.text = "PIP  HP  %d / %d" % [current_health, max_health]
-	for heart_index in health_hearts.size():
-		health_hearts[heart_index].modulate.a = 1.0 if heart_index < current_health else 0.22
+	player_health_label.text = "HP: %d/%d" % [current_health, max_health]
 
 
 func _on_player_died() -> void:
-	player_health_label.text = "PIP  HP  0 / 3"
+	player_health_label.text = "HP: 0/3"
 
 
 func _on_overclock_changed(current_value: int, max_value: int) -> void:

@@ -13,8 +13,7 @@ func _ready() -> void:
 	if is_absorbable:
 		add_to_group("blue_projectiles")
 		$Aura.show()
-		$Glow.color = Color(0.02, 0.46, 1.0, 1.0)
-		$Core.color = Color(0.68, 0.93, 1.0, 1.0)
+		$SpriteArt.region_rect = Rect2(555, 805, 215, 155)
 
 
 func _physics_process(delta: float) -> void:

@@ -75,9 +75,10 @@ theme_override_colors/font_color = Color(0.96, 0.82, 0.36, 1)
 theme_override_colors/font_outline_color = Color(0.04, 0.045, 0.05, 1)
 theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 20
-text = "PIP  HP  3 / 3"
+text = "HP: 3/3"
 
 [node name="HeartOne" type="TextureRect" parent="Interface"]
+visible = false
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 24.0
@@ -88,6 +89,7 @@ texture = SubResource("HeartAtlas")
 expand_mode = 1
 
 [node name="HeartTwo" type="TextureRect" parent="Interface"]
+visible = false
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 64.0
@@ -98,6 +100,7 @@ texture = SubResource("HeartAtlas")
 expand_mode = 1
 
 [node name="HeartThree" type="TextureRect" parent="Interface"]
+visible = false
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 104.0

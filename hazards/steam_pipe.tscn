@@ -35,6 +35,20 @@ region_rect = Rect2(35, 330, 155, 240)
 position = Vector2(0, -60)
 scale = Vector2(0.32, 0.55)
 
+[node name="ExplosionZone" type="Polygon2D" parent="."]
+visible = false
+z_index = -1
+polygon = PackedVector2Array(-105, 0, -91, -52, -52, -91, 0, -105, 52, -91, 91, -52, 105, 0, 91, 52, 52, 91, 0, 105, -52, 91, -91, 52)
+color = Color(1, 0.08, 0.03, 0.28)
+
+[node name="ExplosionSprite" type="Sprite2D" parent="."]
+visible = false
+z_index = 4
+texture = ExtResource("2_sheet")
+region_enabled = true
+region_rect = Rect2(795, 590, 335, 190)
+scale = Vector2(0.42, 0.42)
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -54)
 shape = SubResource("PipeShape")

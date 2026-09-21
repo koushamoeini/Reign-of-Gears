@@ -7,6 +7,8 @@ extends Node2D
 @onready var pressure_hazards: Node2D = $PressureHazards
 @onready var left_collision: CollisionShape2D = $PressureHazards/LeftPressure/CollisionShape2D
 @onready var right_collision: CollisionShape2D = $PressureHazards/RightPressure/CollisionShape2D
+@onready var left_flames: Sprite2D = $PressureHazards/LeftPressure/FlameSprite
+@onready var right_flames: Sprite2D = $PressureHazards/RightPressure/FlameSprite
 
 var current_phase: int = 1
 
@@ -14,6 +16,10 @@ var current_phase: int = 1
 func _process(_delta: float) -> void:
 	if current_phase >= 3:
 		pressure_hazards.modulate.a = 0.72 + 0.2 * sin(Time.get_ticks_msec() * 0.014)
+		var frame := int(Time.get_ticks_msec() / 130) % 4
+		var flame_region := Rect2(750 + frame * 190, 330, 190, 250)
+		left_flames.region_rect = flame_region
+		right_flames.region_rect = flame_region
 
 
 func set_phase(new_phase: int) -> void:

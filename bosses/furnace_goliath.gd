@@ -19,13 +19,13 @@ const PHASE_THREE_STREAM_INTERVAL := 0.85
 const PHASE_THREE_FIRE_RATE_MULTIPLIER := 1.5
 const DASH_SPEED := 820.0
 const DASH_DURATION := 0.65
-const SPRITE_IDLE := Rect2(20, 500, 140, 175)
-const SPRITE_TELEGRAPH := Rect2(820, 500, 170, 175)
-const SPRITE_SHOOT := Rect2(20, 690, 145, 160)
-const SPRITE_DASH := Rect2(1210, 500, 175, 175)
-const SPRITE_RAGE := Rect2(850, 690, 175, 160)
-const SPRITE_DAMAGE := Rect2(330, 850, 145, 170)
-const SPRITE_DEATH := Rect2(510, 840, 190, 180)
+const SPRITE_IDLE := Rect2(20, 500, 180, 190)
+const SPRITE_TELEGRAPH := Rect2(820, 500, 180, 190)
+const SPRITE_SHOOT := Rect2(20, 680, 180, 190)
+const SPRITE_DASH := Rect2(1210, 500, 180, 190)
+const SPRITE_RAGE := Rect2(850, 680, 180, 190)
+const SPRITE_DAMAGE := Rect2(330, 834, 180, 190)
+const SPRITE_DEATH := Rect2(510, 834, 180, 190)
 
 @export var fireball_scene: PackedScene = preload("res://bosses/fireball.tscn")
 
