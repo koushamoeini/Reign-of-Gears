@@ -4,9 +4,13 @@ extends Area2D
 @export var speed: float = 700.0
 
 var direction: Vector2 = Vector2.RIGHT
+var is_overclocked: bool = false
 
 
 func _ready() -> void:
+	if is_overclocked:
+		$Aura.show()
+		$Visual.color = Color(0.08, 0.65, 1.0, 1.0)
 	body_entered.connect(_on_body_entered)
 
 

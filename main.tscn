@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" path="res://player/pip.tscn" id="2_pip"]
 [ext_resource type="PackedScene" path="res://bosses/furnace_goliath.tscn" id="3_boss"]
 [ext_resource type="PackedScene" path="res://ui/combat_hud.tscn" id="4_hud"]
+[ext_resource type="PackedScene" path="res://hazards/stage_hazard_controller.tscn" id="5_hazards"]
 
 [sub_resource type="RectangleShape2D" id="FloorShape"]
 size = Vector2(1280, 60)
@@ -49,5 +50,7 @@ position = Vector2(220, 620)
 
 [node name="FurnaceGoliath" parent="." instance=ExtResource("3_boss")]
 position = Vector2(1040, 610)
+
+[node name="StageHazards" parent="." instance=ExtResource("5_hazards")]
 
 [node name="CombatHUD" parent="." instance=ExtResource("4_hud")]

@@ -9,9 +9,11 @@ enum State { IDLE, SHOOTING, DASH_ATTACK }
 
 const MAX_HEALTH := 50
 const PHASE_TWO_THRESHOLD := 25
+const PHASE_THREE_THRESHOLD := 15
 const IDLE_DURATION := 2.0
 const SHOT_COUNT := 3
 const SHOT_INTERVAL := 0.4
+const PHASE_THREE_FIRE_RATE_MULTIPLIER := 1.5
 const DASH_SPEED := 820.0
 const DASH_DURATION := 0.65
 
@@ -21,6 +23,7 @@ const DASH_DURATION := 0.65
 @onready var phase_shift_sfx: AudioStreamPlayer2D = $PhaseShiftSfx
 @onready var hit_flash: Polygon2D = $HitFlash
 @onready var telegraph_flash: Polygon2D = $TelegraphFlash
+@onready var rage_glow: Polygon2D = $RageGlow
 
 var health: int = MAX_HEALTH
 var phase: int = 1
@@ -31,6 +34,7 @@ var dash_direction: float = -1.0
 var next_attack_is_dash: bool = false
 var is_telegraphing: bool = false
 var hit_flash_version: int = 0
+var rage_tween: Tween
 
 
 func _ready() -> void:
@@ -70,11 +74,7 @@ func take_damage(amount: int) -> void:
 	SoundManager.play_hit_sfx()
 	_show_hit_flash()
 
-	if phase == 1 and health < PHASE_TWO_THRESHOLD:
-		phase = 2
-		next_attack_is_dash = true
-		phase_shift_sfx.play()
-		phase_changed.emit(phase)
+	_update_phase()
 
 	if health == 0:
 		_defeat()
@@ -87,6 +87,7 @@ func _defeat() -> void:
 	$CollisionShape2D.set_deferred("disabled", true)
 	hit_flash.hide()
 	telegraph_flash.hide()
+	rage_glow.hide()
 	_spawn_explosion()
 	died.emit()
 
@@ -123,11 +124,11 @@ func _choose_attack() -> void:
 		return
 
 	var next_state: State
-	if phase == 2 and next_attack_is_dash:
+	if phase >= 2 and next_attack_is_dash:
 		next_attack_is_dash = false
 		next_state = State.DASH_ATTACK
 	else:
-		next_attack_is_dash = phase == 2
+		next_attack_is_dash = phase >= 2
 		next_state = State.SHOOTING
 	_telegraph_attack(next_state)
 
@@ -172,7 +173,7 @@ func _shooting_sequence() -> void:
 			break
 		_fire_at_player()
 		if shot_index < SHOT_COUNT - 1:
-			await get_tree().create_timer(SHOT_INTERVAL).timeout
+			await get_tree().create_timer(_current_shot_interval()).timeout
 
 	if state == State.SHOOTING:
 		_change_state(State.IDLE)
@@ -197,6 +198,35 @@ func _direction_to_player() -> float:
 		if not is_zero_approx(horizontal_distance):
 			return signf(horizontal_distance)
 	return -1.0
+
+
+func _update_phase() -> void:
+	if health < PHASE_THREE_THRESHOLD and phase < 3:
+		_enter_phase(3)
+	elif health < PHASE_TWO_THRESHOLD and phase < 2:
+		_enter_phase(2)
+
+
+func _enter_phase(new_phase: int) -> void:
+	phase = new_phase
+	next_attack_is_dash = true
+	phase_shift_sfx.play()
+	if phase == 3:
+		_start_rage_glow()
+	phase_changed.emit(phase)
+
+
+func _start_rage_glow() -> void:
+	rage_glow.show()
+	if rage_tween and rage_tween.is_valid():
+		rage_tween.kill()
+	rage_tween = create_tween().set_loops()
+	rage_tween.tween_property(rage_glow, "modulate:a", 0.38, 0.22)
+	rage_tween.tween_property(rage_glow, "modulate:a", 0.9, 0.22)
+
+
+func _current_shot_interval() -> float:
+	return SHOT_INTERVAL / PHASE_THREE_FIRE_RATE_MULTIPLIER if phase == 3 else SHOT_INTERVAL
 
 
 func _damage_dash_collisions() -> void:

@@ -2,6 +2,7 @@ extends Node2D
 
 @onready var player: Node = $Pip
 @onready var boss: Node = $FurnaceGoliath
+@onready var stage_hazards: StageHazardController = $StageHazards
 @onready var combat_hud: CombatHUD = $CombatHUD
 
 var encounter_finished: bool = false
@@ -24,6 +25,7 @@ func _on_player_health_changed(_current_health: int, _max_health: int) -> void:
 
 func _on_boss_phase_changed(_new_phase: int) -> void:
 	_shake_arena(13.0, 0.45)
+	stage_hazards.set_phase(_new_phase)
 
 
 func _on_player_died() -> void:
@@ -38,6 +40,7 @@ func _on_boss_died() -> void:
 	if encounter_finished:
 		return
 	encounter_finished = true
+	stage_hazards.stop_all()
 	_shake_arena(12.0, 0.4)
 	combat_hud.show_victory()
 

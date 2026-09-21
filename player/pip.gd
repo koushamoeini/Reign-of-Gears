@@ -35,6 +35,7 @@ const OVERCLOCK_FIRE_RATE_MULTIPLIER := 2.0
 @onready var shoot_cooldown_timer: Timer = $ShootCooldownTimer
 @onready var overclock_timer: Timer = $OverclockTimer
 @onready var overclock_aura: Polygon2D = $OverclockAura
+@onready var overclock_trail: CPUParticles2D = $OverclockTrail
 
 var health: int
 var facing_direction: float = 1.0
@@ -89,6 +90,7 @@ func shoot() -> void:
 
 	var bullet := bullet_scene.instantiate()
 	bullet.set("direction", Vector2(facing_direction, 0.0))
+	bullet.set("is_overclocked", is_overclock_active)
 	bullet.rotation = PI if facing_direction < 0.0 else 0.0
 	get_tree().current_scene.add_child(bullet)
 	bullet.global_position = muzzle.global_position
@@ -150,6 +152,7 @@ func _try_activate_overclock() -> void:
 	overclock_changed.emit(overclock_meter, OVERCLOCK_MAX)
 	overclock_mode_changed.emit(true)
 	overclock_aura.show()
+	overclock_trail.emitting = true
 	overclock_timer.start()
 
 
@@ -157,6 +160,7 @@ func _on_overclock_timer_timeout() -> void:
 	overclock_timer.stop()
 	is_overclock_active = false
 	overclock_aura.hide()
+	overclock_trail.emitting = false
 	overclock_mode_changed.emit(false)
 
 
@@ -197,7 +201,7 @@ func _register_controls() -> void:
 	_add_key_action("pip_dash", KEY_A)
 	_add_key_action("pip_jump", KEY_F)
 	_add_key_action("pip_shoot", KEY_D)
-	_add_key_action("pip_special", KEY_S)
+	_add_key_action("pip_special", KEY_E)
 
 
 func _add_key_action(action: StringName, keycode: Key) -> void:

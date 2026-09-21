@@ -36,6 +36,21 @@ scale = Vector2(1.35, 1.35)
 polygon = PackedVector2Array(-22, -24, -12, -24, -12, -36, 12, -36, 12, -24, 22, -24, 22, 24, -22, 24)
 color = Color(0.05, 0.62, 1, 0.42)
 
+[node name="OverclockTrail" type="CPUParticles2D" parent="."]
+emitting = false
+z_index = -2
+amount = 28
+lifetime = 0.45
+local_coords = false
+direction = Vector2(-1, 0)
+spread = 20.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 80.0
+initial_velocity_max = 160.0
+scale_amount_min = 2.0
+scale_amount_max = 4.0
+color = Color(0.05, 0.62, 1, 0.75)
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape_pip")
 
