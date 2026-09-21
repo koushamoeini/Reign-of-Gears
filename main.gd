@@ -4,6 +4,8 @@ extends Node2D
 @onready var boss: Node = $FurnaceGoliath
 @onready var stage_hazards: StageHazardController = $StageHazards
 @onready var combat_hud: CombatHUD = $CombatHUD
+@onready var background_music: AudioStreamPlayer = $AudioHooks/BackgroundMusic
+@onready var victory_sound: AudioStreamPlayer = $AudioHooks/VictorySound
 
 var encounter_finished: bool = false
 var arena_origin: Vector2
@@ -16,7 +18,16 @@ func _ready() -> void:
 	player.connect("health_changed", _on_player_health_changed)
 	boss.connect("died", _on_boss_died)
 	boss.connect("phase_changed", _on_boss_phase_changed)
-	combat_hud.next_boss_requested.connect(_on_next_boss_requested)
+	combat_hud.start_game_requested.connect(_on_start_game_requested)
+
+	var start_immediately := get_tree().has_meta("start_immediately") and bool(get_tree().get_meta("start_immediately"))
+	if get_tree().has_meta("start_immediately"):
+		get_tree().remove_meta("start_immediately")
+	if start_immediately:
+		_begin_fight()
+	else:
+		combat_hud.show_main_menu()
+		get_tree().paused = true
 
 
 func _on_player_health_changed(_current_health: int, _max_health: int) -> void:
@@ -42,12 +53,20 @@ func _on_boss_died() -> void:
 	encounter_finished = true
 	stage_hazards.stop_all()
 	_shake_arena(12.0, 0.4)
+	if victory_sound.stream:
+		victory_sound.play()
 	combat_hud.show_victory()
 
 
-func _on_next_boss_requested() -> void:
-	# Replace this reload with change_scene_to_file() when boss two is ready.
-	get_tree().reload_current_scene()
+func _on_start_game_requested() -> void:
+	_begin_fight()
+
+
+func _begin_fight() -> void:
+	combat_hud.hide_main_menu()
+	get_tree().paused = false
+	if background_music.stream and not background_music.playing:
+		background_music.play()
 
 
 func _shake_arena(max_strength: float, duration: float) -> void:

@@ -179,7 +179,7 @@ theme_override_colors/font_color = Color(0.96, 0.72, 0.22, 1)
 theme_override_colors/font_outline_color = Color(0.04, 0.045, 0.05, 1)
 theme_override_constants/outline_size = 8
 theme_override_font_sizes/font_size = 46
-text = "GAME OVER"
+text = "YOU CRASHED"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -198,7 +198,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.82, 0.84, 0.86, 1)
 theme_override_font_sizes/font_size = 18
-text = "Pip's gears have stopped."
+text = "Press R or retry the bounty."
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -219,4 +219,88 @@ grow_vertical = 2
 theme_override_font_sizes/font_size = 18
 text = "RETRY"
 
-[connection signal="pressed" from="Interface/ResultOverlay/RetryButton" to="." method="_on_result_button_pressed"]
+[node name="MainMenuButton" type="Button" parent="Interface/ResultOverlay"]
+custom_minimum_size = Vector2(150, 44)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 10.0
+offset_top = 48.0
+offset_right = 160.0
+offset_bottom = 92.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 18
+text = "MAIN MENU"
+
+[node name="MainMenuOverlay" type="ColorRect" parent="Interface"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0.025, 0.028, 0.032, 0.96)
+
+[node name="Title" type="Label" parent="Interface/MainMenuOverlay"]
+layout_mode = 1
+anchor_left = 0.05
+anchor_top = 0.5
+anchor_right = 0.95
+anchor_bottom = 0.5
+offset_top = -125.0
+offset_bottom = -45.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.96, 0.72, 0.22, 1)
+theme_override_colors/font_outline_color = Color(0.04, 0.045, 0.05, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 38
+text = "CLOCKWORK BOUNTY: FURNACE GOLIATH"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Subtitle" type="Label" parent="Interface/MainMenuOverlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -30.0
+offset_right = 300.0
+offset_bottom = 10.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.68, 0.73, 0.78, 1)
+theme_override_font_sizes/font_size = 17
+text = "WANTED // DEAD OR DISASSEMBLED"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StartButton" type="Button" parent="Interface/MainMenuOverlay"]
+custom_minimum_size = Vector2(190, 48)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -95.0
+offset_top = 52.0
+offset_right = 95.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 19
+text = "START GAME"
+
+[connection signal="pressed" from="Interface/ResultOverlay/RetryButton" to="." method="_on_retry_button_pressed"]
+[connection signal="pressed" from="Interface/ResultOverlay/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
+[connection signal="pressed" from="Interface/MainMenuOverlay/StartButton" to="." method="_on_start_button_pressed"]

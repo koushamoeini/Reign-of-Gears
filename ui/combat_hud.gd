@@ -1,9 +1,7 @@
 class_name CombatHUD
 extends CanvasLayer
 
-signal next_boss_requested
-
-enum ResultAction { RETRY, NEXT_BOSS }
+signal start_game_requested
 
 @onready var player_health_label: Label = $Interface/PlayerHealth
 @onready var overclock_label: Label = $Interface/OverclockLabel
@@ -16,10 +14,13 @@ enum ResultAction { RETRY, NEXT_BOSS }
 @onready var result_title: Label = $Interface/ResultOverlay/ResultTitle
 @onready var result_detail: Label = $Interface/ResultOverlay/ResultDetail
 @onready var retry_button: Button = $Interface/ResultOverlay/RetryButton
+@onready var main_menu_button: Button = $Interface/ResultOverlay/MainMenuButton
+@onready var main_menu_overlay: ColorRect = $Interface/MainMenuOverlay
+@onready var start_button: Button = $Interface/MainMenuOverlay/StartButton
 
 var player: Node
 var boss: Node
-var result_action: ResultAction = ResultAction.RETRY
+var is_game_over: bool = false
 
 
 func _ready() -> void:
@@ -80,30 +81,61 @@ func _on_boss_died() -> void:
 	boss_health_label.text = "DEFEATED"
 
 
+func show_main_menu() -> void:
+	result_overlay.hide()
+	main_menu_overlay.show()
+	start_button.grab_focus()
+
+
+func hide_main_menu() -> void:
+	main_menu_overlay.hide()
+
+
 func show_game_over() -> void:
-	result_action = ResultAction.RETRY
-	result_title.text = "GAME OVER"
-	result_detail.text = "Pip's gears have stopped."
-	retry_button.text = "RETRY"
-	retry_button.show()
+	is_game_over = true
+	result_title.text = "YOU CRASHED"
+	result_detail.text = "Press R or retry the bounty."
+	retry_button.offset_left = -75.0
+	retry_button.offset_right = 75.0
+	main_menu_button.hide()
 	result_overlay.show()
 	retry_button.grab_focus()
 
 
 func show_victory() -> void:
-	result_action = ResultAction.NEXT_BOSS
-	result_title.text = "VICTORY"
-	result_detail.text = "Furnace Goliath has fallen."
-	retry_button.text = "NEXT BOSS"
-	retry_button.show()
+	is_game_over = false
+	result_title.text = "BOUNTY COLLECTED!"
+	result_detail.text = "Furnace Goliath has been scrapped."
+	retry_button.offset_left = -160.0
+	retry_button.offset_right = -10.0
+	main_menu_button.show()
 	result_overlay.show()
 	retry_button.grab_focus()
 
 
-func _on_result_button_pressed() -> void:
-	match result_action:
-		ResultAction.RETRY:
-			get_tree().paused = false
-			get_tree().reload_current_scene()
-		ResultAction.NEXT_BOSS:
-			next_boss_requested.emit()
+func _input(event: InputEvent) -> void:
+	if is_game_over and result_overlay.visible and event is InputEventKey and event.pressed and not event.echo:
+		if event.physical_keycode == KEY_R:
+			get_viewport().set_input_as_handled()
+			_retry_fight()
+
+
+func _on_start_button_pressed() -> void:
+	start_game_requested.emit()
+
+
+func _on_retry_button_pressed() -> void:
+	_retry_fight()
+
+
+func _retry_fight() -> void:
+	get_tree().paused = false
+	get_tree().set_meta("start_immediately", true)
+	get_tree().reload_current_scene()
+
+
+func _on_main_menu_button_pressed() -> void:
+	get_tree().paused = false
+	if get_tree().has_meta("start_immediately"):
+		get_tree().remove_meta("start_immediately")
+	get_tree().reload_current_scene()
