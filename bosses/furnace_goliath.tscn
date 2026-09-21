@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://bosses/furnace_goliath.gd" id="1_boss"]
+
+[sub_resource type="CapsuleShape2D" id="BossShape"]
+radius = 42.0
+height = 96.0
+
+[node name="FurnaceGoliath" type="CharacterBody2D" groups=["bosses"]]
+script = ExtResource("1_boss")
+
+[node name="Body" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-42, -48, 42, -48, 48, 30, 30, 48, -30, 48, -48, 30)
+color = Color(0.31, 0.28, 0.27, 1)
+
+[node name="Furnace" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-24, -20, 24, -20, 28, 28, -28, 28)
+color = Color(0.92, 0.25, 0.08, 1)
+
+[node name="Core" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-12, -10, 12, -10, 16, 18, -16, 18)
+color = Color(1, 0.74, 0.16, 1)
+
+[node name="Chimney" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-28, -70, -5, -70, -5, -42, -28, -42)
+color = Color(0.18, 0.18, 0.19, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("BossShape")
+
+[node name="Muzzle" type="Marker2D" parent="."]
+position = Vector2(-50, -8)

@@ -1,0 +1,28 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://bosses/fireball.gd" id="1_fireball"]
+
+[sub_resource type="CircleShape2D" id="FireballShape"]
+radius = 10.0
+
+[node name="Fireball" type="Area2D"]
+collision_layer = 8
+collision_mask = 1
+script = ExtResource("1_fireball")
+
+[node name="Glow" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-14, 0, -7, -9, 5, -11, 14, 0, 5, 11, -7, 9)
+color = Color(1, 0.27, 0.05, 1)
+
+[node name="Core" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-7, 0, -3, -5, 4, -5, 7, 0, 4, 5, -3, 5)
+color = Color(1, 0.83, 0.25, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("FireballShape")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+rect = Rect2(-16, -16, 32, 32)
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_screen_exited"]

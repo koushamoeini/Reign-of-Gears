@@ -9,7 +9,7 @@ height = 48.0
 [sub_resource type="RectangleShape2D" id="HurtboxShape_pip"]
 size = Vector2(32, 44)
 
-[node name="Pip" type="CharacterBody2D"]
+[node name="Pip" type="CharacterBody2D" groups=["player"]]
 script = ExtResource("1_pip")
 
 [node name="Body" type="Polygon2D" parent="."]
