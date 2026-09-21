@@ -69,8 +69,43 @@ func take_damage(amount: int) -> void:
 		phase_changed.emit(phase)
 
 	if health == 0:
-		died.emit()
-		queue_free()
+		_defeat()
+
+
+func _defeat() -> void:
+	state = State.IDLE
+	velocity = Vector2.ZERO
+	set_physics_process(false)
+	$CollisionShape2D.set_deferred("disabled", true)
+	_spawn_explosion()
+	died.emit()
+
+	var fade_tween := create_tween()
+	fade_tween.tween_property(self, "modulate:a", 0.0, 0.7)
+	await get_tree().create_timer(0.75).timeout
+	queue_free()
+
+
+func _spawn_explosion() -> void:
+	for spark_index in 16:
+		var spark := Polygon2D.new()
+		spark.polygon = PackedVector2Array([
+			Vector2(-6, -4), Vector2(7, 0), Vector2(-6, 4)
+		])
+		spark.color = Color(1.0, randf_range(0.25, 0.7), 0.05, 1.0)
+		spark.global_position = global_position
+		spark.z_index = 10
+		get_tree().current_scene.add_child(spark)
+
+		var angle := TAU * float(spark_index) / 16.0 + randf_range(-0.12, 0.12)
+		var distance := randf_range(100.0, 210.0)
+		var destination := global_position + Vector2.RIGHT.rotated(angle) * distance
+		var spark_tween := spark.create_tween().set_parallel(true)
+		spark_tween.tween_property(spark, "global_position", destination, 0.65)
+		spark_tween.tween_property(spark, "rotation", randf_range(-5.0, 5.0), 0.65)
+		spark_tween.tween_property(spark, "scale", Vector2(0.2, 0.2), 0.65)
+		spark_tween.tween_property(spark, "modulate:a", 0.0, 0.65)
+		spark_tween.chain().tween_callback(spark.queue_free)
 
 
 func _choose_attack() -> void:

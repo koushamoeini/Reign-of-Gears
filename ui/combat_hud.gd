@@ -5,6 +5,10 @@ extends CanvasLayer
 @onready var boss_name_label: Label = $Interface/BossName
 @onready var boss_health_bar: ProgressBar = $Interface/BossHealthBar
 @onready var boss_health_label: Label = $Interface/BossHealthValue
+@onready var result_overlay: ColorRect = $Interface/ResultOverlay
+@onready var result_title: Label = $Interface/ResultOverlay/ResultTitle
+@onready var result_detail: Label = $Interface/ResultOverlay/ResultDetail
+@onready var retry_button: Button = $Interface/ResultOverlay/RetryButton
 
 var player: Node
 var boss: Node
@@ -52,3 +56,24 @@ func _on_boss_phase_changed(new_phase: int) -> void:
 func _on_boss_died() -> void:
 	boss_health_bar.value = 0
 	boss_health_label.text = "DEFEATED"
+
+
+func show_game_over() -> void:
+	result_title.text = "GAME OVER"
+	result_detail.text = "Pip's gears have stopped."
+	retry_button.text = "RETRY"
+	retry_button.show()
+	result_overlay.show()
+	retry_button.grab_focus()
+
+
+func show_victory() -> void:
+	result_title.text = "VICTORY"
+	result_detail.text = "Furnace Goliath has fallen."
+	retry_button.hide()
+	result_overlay.show()
+
+
+func _on_retry_button_pressed() -> void:
+	get_tree().paused = false
+	get_tree().reload_current_scene()
