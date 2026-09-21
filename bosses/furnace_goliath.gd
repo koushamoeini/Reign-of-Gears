@@ -33,6 +33,7 @@ const DASH_DURATION := 0.65
 @onready var victory_explosion: GPUParticles2D = $VictoryExplosion
 @onready var victory_explosion_wide: GPUParticles2D = $VictoryExplosionWide
 @onready var victory_explosion_core: GPUParticles2D = $VictoryExplosionCore
+@onready var sprite_art: Sprite2D = $SpriteArt
 
 var health: int = MAX_HEALTH
 var phase: int = 1
@@ -85,6 +86,7 @@ func take_damage(amount: int) -> void:
 	SoundManager.play_hit_sfx()
 	_show_hit_flash()
 	damage_sparks.restart()
+	sprite_art.region_rect = Rect2(548, 162, 72, 82)
 
 	_update_phase()
 
@@ -102,6 +104,7 @@ func _defeat() -> void:
 	rage_glow.hide()
 	transition_shield.hide()
 	rage_fire_timer.stop()
+	sprite_art.region_rect = Rect2(658, 162, 166, 84)
 	_spawn_explosion()
 
 	var fade_tween := create_tween()
@@ -185,9 +188,12 @@ func _change_state(new_state: State) -> void:
 	match state:
 		State.IDLE:
 			state_time_remaining = IDLE_DURATION
+			sprite_art.region_rect = Rect2(15, 161, 50, 84)
 		State.SHOOTING:
+			sprite_art.region_rect = Rect2(246, 161, 77, 84)
 			_shooting_sequence()
 		State.DASH_ATTACK:
+			sprite_art.region_rect = Rect2(132, 161, 75, 84)
 			state_time_remaining = DASH_DURATION
 			dash_direction = _direction_to_player()
 
@@ -253,6 +259,7 @@ func _enter_phase(new_phase: int) -> void:
 	next_attack_is_dash = true
 	phase_shift_sfx.play()
 	if phase == 3:
+		sprite_art.region_rect = Rect2(367, 161, 143, 84)
 		_start_rage_glow()
 		rage_fire_timer.start(PHASE_THREE_STREAM_INTERVAL)
 	phase_changed.emit(phase)

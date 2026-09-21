@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://hazards/steam_pipe.gd" id="1_pipe"]
+[ext_resource type="Texture2D" path="res://assets/b18c3cc0-0bf5-4608-86ce-f136dbdbca56.jpg" id="2_sheet"]
 
 [sub_resource type="RectangleShape2D" id="PipeShape"]
 size = Vector2(36, 120)
@@ -25,6 +26,14 @@ color = Color(1, 0.66, 0.08, 0.9)
 visible = false
 polygon = PackedVector2Array(-18, -120, 18, -120, 18, 0, 9, 12, -9, 12, -18, 0)
 color = Color(0.3, 0.34, 0.36, 1)
+
+[node name="PipeSprite" type="Sprite2D" parent="."]
+visible = false
+texture = ExtResource("2_sheet")
+region_enabled = true
+region_rect = Rect2(292, 294, 94, 64)
+position = Vector2(0, -60)
+scale = Vector2(0.6, 1.75)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -54)

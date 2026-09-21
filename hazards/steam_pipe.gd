@@ -6,6 +6,7 @@ extends Area2D
 
 @onready var warning: Node2D = $Warning
 @onready var pipe_visual: Polygon2D = $PipeVisual
+@onready var pipe_sprite: Sprite2D = $PipeSprite
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 
 var is_falling: bool = false
@@ -29,6 +30,7 @@ func _physics_process(delta: float) -> void:
 func _on_warning_timer_timeout() -> void:
 	warning.hide()
 	pipe_visual.show()
+	pipe_sprite.show()
 	collision_shape.set_deferred("disabled", false)
 	monitoring = true
 	is_falling = true

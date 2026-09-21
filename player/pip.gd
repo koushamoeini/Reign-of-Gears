@@ -51,6 +51,7 @@ const DEFAULT_KEY_BINDINGS := {
 @onready var overclock_trail: CPUParticles2D = $OverclockTrail
 @onready var muzzle_flash: GPUParticles2D = $Muzzle/MuzzleFlash
 @onready var dash_trail: GPUParticles2D = $DashTrail
+@onready var sprite_art: Sprite2D = $SpriteArt
 
 var health: int
 var facing_direction: float = 1.0
@@ -100,6 +101,7 @@ func _physics_process(delta: float) -> void:
 	dash_trail.emitting = _is_dashing()
 
 	move_and_slide()
+	_update_sprite_art(direction)
 	if _is_dashing():
 		_absorb_blue_projectiles()
 
@@ -114,6 +116,7 @@ func shoot() -> void:
 	bullet.rotation = PI if facing_direction < 0.0 else 0.0
 	get_tree().current_scene.add_child(bullet)
 	bullet.global_position = muzzle.global_position
+	sprite_art.region_rect = Rect2(478, 51, 75, 58)
 	muzzle_flash.restart()
 	SoundManager.play_shoot_sfx()
 	shoot_cooldown_timer.start(_current_fire_interval())
@@ -129,6 +132,7 @@ func take_damage(amount: int) -> void:
 	_show_hit_flash()
 
 	if health == 0:
+		sprite_art.region_rect = Rect2(734, 50, 74, 58)
 		died.emit()
 		queue_free()
 		return
@@ -143,6 +147,7 @@ func _start_dash() -> void:
 		return
 
 	dash_duration_timer.start()
+	sprite_art.region_rect = Rect2(382, 50, 77, 58)
 	dash_cooldown_timer.start()
 	SoundManager.play_dash_sfx()
 
@@ -196,6 +201,18 @@ func _current_move_speed() -> float:
 
 func _current_fire_interval() -> float:
 	return fire_interval / OVERCLOCK_FIRE_RATE_MULTIPLIER if is_overclock_active else fire_interval
+
+
+func _update_sprite_art(direction: float) -> void:
+	if _is_dashing():
+		sprite_art.region_rect = Rect2(382, 50, 77, 58)
+	elif not is_on_floor():
+		sprite_art.region_rect = Rect2(275, 50, 46, 58) if velocity.y < 0.0 else Rect2(326, 50, 43, 58)
+	elif not is_zero_approx(direction):
+		sprite_art.region_rect = Rect2(72, 50, 55, 58)
+	else:
+		sprite_art.region_rect = Rect2(20, 50, 43, 58)
+	sprite_art.flip_h = facing_direction < 0.0
 
 
 func _show_hit_flash() -> void:

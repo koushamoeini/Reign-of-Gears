@@ -1,6 +1,11 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://ui/combat_hud.gd" id="1_hud"]
+[ext_resource type="Texture2D" path="res://assets/b18c3cc0-0bf5-4608-86ce-f136dbdbca56.jpg" id="2_sheet"]
+
+[sub_resource type="AtlasTexture" id="HeartAtlas"]
+atlas = ExtResource("2_sheet")
+region = Rect2(916, 181, 18, 20)
 
 [sub_resource type="StyleBoxFlat" id="BossBarBackground"]
 bg_color = Color(0.08, 0.09, 0.1, 0.96)
@@ -64,6 +69,30 @@ theme_override_colors/font_outline_color = Color(0.04, 0.045, 0.05, 1)
 theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 20
 text = "PIP  HP  3 / 3"
+
+[node name="HeartOne" type="TextureRect" parent="Interface"]
+offset_left = 24.0
+offset_top = 54.0
+offset_right = 51.0
+offset_bottom = 84.0
+texture = SubResource("HeartAtlas")
+expand_mode = 1
+
+[node name="HeartTwo" type="TextureRect" parent="Interface"]
+offset_left = 55.0
+offset_top = 54.0
+offset_right = 82.0
+offset_bottom = 84.0
+texture = SubResource("HeartAtlas")
+expand_mode = 1
+
+[node name="HeartThree" type="TextureRect" parent="Interface"]
+offset_left = 86.0
+offset_top = 54.0
+offset_right = 113.0
+offset_bottom = 84.0
+texture = SubResource("HeartAtlas")
+expand_mode = 1
 
 [node name="OverclockLabel" type="Label" parent="Interface"]
 layout_mode = 0
