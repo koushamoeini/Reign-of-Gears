@@ -1,0 +1,97 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://ui/combat_hud.gd" id="1_hud"]
+
+[sub_resource type="StyleBoxFlat" id="BossBarBackground"]
+bg_color = Color(0.08, 0.09, 0.1, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.48, 0.4, 0.26, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="BossBarFill"]
+bg_color = Color(0.77, 0.15, 0.08, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[node name="CombatHUD" type="CanvasLayer"]
+script = ExtResource("1_hud")
+
+[node name="Interface" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="PlayerHealth" type="Label" parent="Interface"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 108.0
+offset_right = 230.0
+offset_bottom = 142.0
+theme_override_colors/font_color = Color(0.96, 0.82, 0.36, 1)
+theme_override_colors/font_outline_color = Color(0.04, 0.045, 0.05, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 20
+text = "PIP  HP  3 / 3"
+
+[node name="BossName" type="Label" parent="Interface"]
+layout_mode = 1
+anchors_preset = 12
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -82.0
+offset_bottom = -54.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.93, 0.75, 0.42, 1)
+theme_override_colors/font_outline_color = Color(0.04, 0.045, 0.05, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 17
+text = "FURNACE GOLIATH  //  PHASE 1"
+horizontal_alignment = 1
+
+[node name="BossHealthBar" type="ProgressBar" parent="Interface"]
+layout_mode = 1
+anchors_preset = 12
+anchor_left = 0.18
+anchor_right = 0.82
+anchor_bottom = 1.0
+offset_top = -50.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/background = SubResource("BossBarBackground")
+theme_override_styles/fill = SubResource("BossBarFill")
+max_value = 50.0
+value = 50.0
+show_percentage = false
+
+[node name="BossHealthValue" type="Label" parent="Interface"]
+layout_mode = 1
+anchors_preset = 12
+anchor_left = 0.18
+anchor_right = 0.82
+anchor_bottom = 1.0
+offset_top = -48.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.93, 0.78, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.09, 0.1, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 15
+text = "50 / 50"
+horizontal_alignment = 1
+vertical_alignment = 1
