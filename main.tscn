@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=2 format=3 uid="uid://b1mdvlxq68laf"]
 
-[ext_resource path="res://main.gd" type="Script" id="1_main"]
+[ext_resource type="Script" path="res://main.gd" id="1_main"]
 
-[node name="Main" type="Node"]
+[node name="Main" type="Node2D" unique_id=889198793]
 script = ExtResource("1_main")
 
 [node name="Background" type="ColorRect" parent="."]
