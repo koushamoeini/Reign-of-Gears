@@ -6,15 +6,28 @@ signal died
 signal overclock_changed(current_value: int, max_value: int)
 signal overclock_mode_changed(is_active: bool)
 
-# Movement tuning: adjust these three constants to change how Pip feels.
+# Movement tuning: adjust these values to change how Pip feels.
 const SPEED := 260.0 # Horizontal movement speed.
-const JUMP_VELOCITY := -520.0 # More negative means a higher jump.
+const JUMP_VELOCITY := -740.0 # More negative means a higher jump.
 const DASH_SPEED := 760.0 # Horizontal speed during a dash.
+const RISE_GRAVITY_MULTIPLIER := 2.0
+const FALL_GRAVITY_MULTIPLIER := 2.5
+const MAX_FALL_SPEED := 1750.0
 const OVERCLOCK_MAX := 100
 const OVERCLOCK_GAIN := 25
 const OVERCLOCK_DURATION := 5.0
 const OVERCLOCK_SPEED_MULTIPLIER := 1.5
 const OVERCLOCK_FIRE_RATE_MULTIPLIER := 2.0
+const INPUT_BINDINGS_PATH := "user://input_bindings.cfg"
+
+const DEFAULT_KEY_BINDINGS := {
+	"pip_move_left": KEY_LEFT,
+	"pip_move_right": KEY_RIGHT,
+	"pip_dash": KEY_A,
+	"pip_jump": KEY_F,
+	"pip_shoot": KEY_D,
+	"pip_special": KEY_S,
+}
 
 @export var dash_duration: float = 0.16
 @export var dash_cooldown: float = 0.5
@@ -56,10 +69,14 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if not is_on_floor():
-		velocity += get_gravity() * delta
+		var gravity_multiplier := FALL_GRAVITY_MULTIPLIER if velocity.y > 0.0 else RISE_GRAVITY_MULTIPLIER
+		velocity.y = minf(velocity.y + get_gravity().y * gravity_multiplier * delta, MAX_FALL_SPEED)
 
 	if Input.is_action_just_pressed("pip_jump") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
+	elif Input.is_action_just_released("pip_jump") and velocity.y < 0.0:
+		# Releasing early produces a short, responsive hop.
+		velocity.y *= 0.5
 
 	var direction := Input.get_axis("pip_move_left", "pip_move_right")
 	if not is_zero_approx(direction):
@@ -196,17 +213,47 @@ func _on_invincibility_timer_timeout() -> void:
 
 
 func _register_controls() -> void:
-	_add_key_action("pip_move_left", KEY_LEFT)
-	_add_key_action("pip_move_right", KEY_RIGHT)
-	_add_key_action("pip_dash", KEY_A)
-	_add_key_action("pip_jump", KEY_F)
-	_add_key_action("pip_shoot", KEY_D)
-	_add_key_action("pip_special", KEY_S)
+	load_saved_key_bindings()
+	for action: StringName in DEFAULT_KEY_BINDINGS:
+		if not InputMap.has_action(action) or InputMap.action_get_events(action).is_empty():
+			set_key_binding(action, DEFAULT_KEY_BINDINGS[action], false)
 
 
-func _add_key_action(action: StringName, keycode: Key) -> void:
+static func set_key_binding(action: StringName, keycode: Key, save_binding: bool = true) -> void:
 	if not InputMap.has_action(action):
 		InputMap.add_action(action)
+	InputMap.action_erase_events(action)
+	_add_key_action(action, keycode)
+	if save_binding:
+		_save_key_bindings()
+
+
+static func reset_default_key_bindings() -> void:
+	for action: StringName in DEFAULT_KEY_BINDINGS:
+		set_key_binding(action, DEFAULT_KEY_BINDINGS[action], false)
+	_save_key_bindings()
+
+
+static func load_saved_key_bindings() -> void:
+	var config := ConfigFile.new()
+	if config.load(INPUT_BINDINGS_PATH) != OK:
+		return
+	for action: StringName in DEFAULT_KEY_BINDINGS:
+		var saved_keycode: Variant = config.get_value("bindings", String(action), null)
+		if saved_keycode is int:
+			set_key_binding(action, int(saved_keycode), false)
+
+
+static func _save_key_bindings() -> void:
+	var config := ConfigFile.new()
+	for action: StringName in DEFAULT_KEY_BINDINGS:
+		var events := InputMap.action_get_events(action)
+		if not events.is_empty() and events[0] is InputEventKey:
+			config.set_value("bindings", String(action), (events[0] as InputEventKey).physical_keycode)
+	config.save(INPUT_BINDINGS_PATH)
+
+
+static func _add_key_action(action: StringName, keycode: Key) -> void:
 	var key_event := InputEventKey.new()
 	key_event.physical_keycode = keycode
 	if not InputMap.action_has_event(action, key_event):

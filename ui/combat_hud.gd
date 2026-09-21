@@ -22,12 +22,16 @@ signal sfx_volume_changed(value: float)
 @onready var start_button: Button = $Interface/MainMenuOverlay/StartButton
 @onready var settings_panel: ColorRect = $Interface/MainMenuOverlay/SettingsPanel
 
+var rebind_buttons: Dictionary = {}
+var rebinding_action: StringName
+
 var player: Node
 var boss: Node
 var is_game_over: bool = false
 
 
 func _ready() -> void:
+	_register_rebind_buttons()
 	# Waiting one frame ensures every combatant has completed its own _ready().
 	call_deferred("_connect_combatants")
 
@@ -96,10 +100,12 @@ func hide_main_menu() -> void:
 
 
 func _on_settings_button_pressed() -> void:
+	_refresh_binding_buttons()
 	settings_panel.show()
 
 
 func _on_close_settings_button_pressed() -> void:
+	rebinding_action = &""
 	settings_panel.hide()
 
 
@@ -113,6 +119,53 @@ func _on_master_volume_slider_value_changed(value: float) -> void:
 
 func _on_sfx_volume_slider_value_changed(value: float) -> void:
 	sfx_volume_changed.emit(value)
+
+
+func _register_rebind_buttons() -> void:
+	rebind_buttons = {
+		&"pip_move_left": $Interface/MainMenuOverlay/SettingsPanel/MoveLeftButton,
+		&"pip_move_right": $Interface/MainMenuOverlay/SettingsPanel/MoveRightButton,
+		&"pip_dash": $Interface/MainMenuOverlay/SettingsPanel/DashButton,
+		&"pip_jump": $Interface/MainMenuOverlay/SettingsPanel/JumpButton,
+		&"pip_shoot": $Interface/MainMenuOverlay/SettingsPanel/ShootButton,
+		&"pip_special": $Interface/MainMenuOverlay/SettingsPanel/SpecialButton,
+	}
+	_refresh_binding_buttons()
+
+
+func _on_rebind_button_pressed(action: StringName) -> void:
+	rebinding_action = action
+	for binding_action: StringName in rebind_buttons:
+		var button: Button = rebind_buttons[binding_action]
+		button.text = "PRESS A KEY" if binding_action == action else _binding_button_text(binding_action)
+
+
+func _on_reset_bindings_button_pressed() -> void:
+	rebinding_action = &""
+	Pip.reset_default_key_bindings()
+	_refresh_binding_buttons()
+
+
+func _refresh_binding_buttons() -> void:
+	for action: StringName in rebind_buttons:
+		var button: Button = rebind_buttons[action]
+		button.text = _binding_button_text(action)
+
+
+func _binding_button_text(action: StringName) -> String:
+	var action_names := {
+		&"pip_move_left": "MOVE LEFT",
+		&"pip_move_right": "MOVE RIGHT",
+		&"pip_dash": "DASH",
+		&"pip_jump": "JUMP",
+		&"pip_shoot": "SHOOT",
+		&"pip_special": "OVERCLOCK",
+	}
+	var events := InputMap.action_get_events(action)
+	var key_name := "UNBOUND"
+	if not events.is_empty() and events[0] is InputEventKey:
+		key_name = OS.get_keycode_string((events[0] as InputEventKey).physical_keycode)
+	return "%s: %s" % [action_names.get(action, action), key_name]
 
 
 func show_game_over() -> void:
@@ -138,6 +191,17 @@ func show_victory() -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if settings_panel.visible and not rebinding_action.is_empty() and event is InputEventKey and event.pressed and not event.echo:
+		get_viewport().set_input_as_handled()
+		if event.physical_keycode == KEY_ESCAPE:
+			rebinding_action = &""
+			_refresh_binding_buttons()
+			return
+		Pip.set_key_binding(rebinding_action, event.physical_keycode)
+		rebinding_action = &""
+		_refresh_binding_buttons()
+		return
+
 	if is_game_over and result_overlay.visible and event is InputEventKey and event.pressed and not event.echo:
 		if event.physical_keycode == KEY_R:
 			get_viewport().set_input_as_handled()
