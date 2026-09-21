@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://projectiles/bullet.gd" id="1_bullet"]
+
+[sub_resource type="CircleShape2D" id="CircleShape_bullet"]
+radius = 5.0
+
+[node name="Bullet" type="Area2D"]
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("1_bullet")
+
+[node name="Visual" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-8, -3, 4, -3, 9, 0, 4, 3, -8, 3)
+color = Color(1, 0.82, 0.26, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape_bullet")
+
+[node name="Lifetime" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[connection signal="timeout" from="Lifetime" to="." method="queue_free"]

@@ -1,0 +1,52 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://player/pip.gd" id="1_pip"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape_pip"]
+radius = 18.0
+height = 48.0
+
+[sub_resource type="RectangleShape2D" id="HurtboxShape_pip"]
+size = Vector2(32, 44)
+
+[node name="Pip" type="CharacterBody2D"]
+script = ExtResource("1_pip")
+
+[node name="Body" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-18, -24, 18, -24, 18, 24, -18, 24)
+color = Color(0.9, 0.68, 0.2, 1)
+
+[node name="Hat" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-22, -24, 22, -24, 22, -19, 12, -19, 12, -36, -12, -36, -12, -19, -22, -19)
+color = Color(0.16, 0.18, 0.2, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape_pip")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("HurtboxShape_pip")
+
+[node name="Muzzle" type="Marker2D" parent="."]
+position = Vector2(28, 0)
+
+[node name="DashDurationTimer" type="Timer" parent="."]
+wait_time = 0.16
+one_shot = true
+
+[node name="DashCooldownTimer" type="Timer" parent="."]
+wait_time = 0.8
+one_shot = true
+
+[node name="InvincibilityTimer" type="Timer" parent="."]
+wait_time = 1.0
+one_shot = true
+
+[node name="FlashTimer" type="Timer" parent="."]
+wait_time = 0.1
+
+[connection signal="timeout" from="InvincibilityTimer" to="." method="_on_invincibility_timer_timeout"]
+[connection signal="timeout" from="FlashTimer" to="." method="_on_flash_timer_timeout"]
