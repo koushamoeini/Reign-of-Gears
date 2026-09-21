@@ -19,12 +19,13 @@ const PHASE_THREE_STREAM_INTERVAL := 0.85
 const PHASE_THREE_FIRE_RATE_MULTIPLIER := 1.5
 const DASH_SPEED := 820.0
 const DASH_DURATION := 0.65
-const SPRITE_IDLE := Rect2(15, 490, 145, 190)
-const SPRITE_TELEGRAPH := Rect2(745, 490, 180, 190)
-const SPRITE_SHOOT := Rect2(20, 680, 180, 165)
-const SPRITE_RAGE := Rect2(930, 680, 180, 165)
-const SPRITE_DAMAGE := Rect2(270, 845, 160, 175)
-const SPRITE_DEATH := Rect2(530, 830, 250, 190)
+const SPRITE_IDLE := Rect2(20, 500, 140, 175)
+const SPRITE_TELEGRAPH := Rect2(820, 500, 170, 175)
+const SPRITE_SHOOT := Rect2(20, 690, 145, 160)
+const SPRITE_DASH := Rect2(1210, 500, 175, 175)
+const SPRITE_RAGE := Rect2(850, 690, 175, 160)
+const SPRITE_DAMAGE := Rect2(330, 850, 145, 170)
+const SPRITE_DEATH := Rect2(510, 840, 190, 180)
 
 @export var fireball_scene: PackedScene = preload("res://bosses/fireball.tscn")
 
@@ -171,6 +172,9 @@ func _telegraph_attack(next_state: State) -> void:
 	is_telegraphing = true
 	state_time_remaining = 999.0
 	sprite_art.region_rect = SPRITE_TELEGRAPH
+	var telegraph_tween := create_tween()
+	telegraph_tween.tween_property(sprite_art, "scale", Vector2(1.22, 1.22), 0.22)
+	telegraph_tween.tween_property(sprite_art, "scale", Vector2(1.15, 1.15), 0.22)
 	await get_tree().create_timer(0.5).timeout
 	is_telegraphing = false
 	if health > 0:
@@ -197,7 +201,7 @@ func _change_state(new_state: State) -> void:
 			sprite_art.region_rect = SPRITE_SHOOT
 			_shooting_sequence()
 		State.DASH_ATTACK:
-			sprite_art.region_rect = SPRITE_RAGE if phase == 3 else SPRITE_TELEGRAPH
+			sprite_art.region_rect = SPRITE_RAGE if phase == 3 else SPRITE_DASH
 			state_time_remaining = DASH_DURATION
 			dash_direction = _direction_to_player()
 
@@ -205,6 +209,7 @@ func _change_state(new_state: State) -> void:
 func _shooting_sequence() -> void:
 	if phase == 1:
 		_fire_spread_shot()
+		await get_tree().create_timer(0.22).timeout
 	elif phase == 2:
 		for burst_index in PHASE_TWO_BURST_COUNT:
 			if state != State.SHOOTING or not is_instance_valid(player):
@@ -212,6 +217,7 @@ func _shooting_sequence() -> void:
 			_fire_at_player()
 			if burst_index < PHASE_TWO_BURST_COUNT - 1:
 				await get_tree().create_timer(PHASE_TWO_BURST_INTERVAL).timeout
+		await get_tree().create_timer(0.18).timeout
 
 	if state == State.SHOOTING:
 		_change_state(State.IDLE)
@@ -285,7 +291,7 @@ func _set_state_sprite() -> void:
 	elif state == State.SHOOTING:
 		sprite_art.region_rect = SPRITE_SHOOT
 	elif state == State.DASH_ATTACK:
-		sprite_art.region_rect = SPRITE_TELEGRAPH
+		sprite_art.region_rect = SPRITE_DASH
 	else:
 		sprite_art.region_rect = SPRITE_IDLE
 
